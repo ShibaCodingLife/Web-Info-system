@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MusicB.com</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        html,body{
+            width:100%;
+            height:100%;
+        }
+         .main{
+            width: 100%;
+            height: 100%;
+            background: url("../static/wp3826809.webp") no-repeat;
+            background-position: center;
+            background-size:cover;   
+                 
+         }
+        .mainframe{
+            width: 700px;
+            height: 600px;
+            background: rgba(0,0,0,0.8);
+            /*position:fixed;
+            left:0;
+            right:0;
+            top:0;
+            bottom: 0;
+            margin: auto;*/
+            position: absolute;
+            margin:auto;
+            left:0;
+            right:0;
+            top:0;
+            bottom:0;
+
+          
+            border-radius: 15px;
+            /*padding:50px 0;*/
+            box-sizing: border-box;
+            box-shadow: 5px 5px 5px rgba(0,0,0,0.4);
+            animation:ani 0.8s ease-in-out forwards;
+        }
+
+        @keyframes ani{
+            0%{
+                opacity:0;
+                transform: translateY(-10px);
+
+            }
+            100%{
+                opacity:1;
+                
+            }
+        }
+
+        .loginword{
+            text-align: center;
+            font-size:30px;
+            color: beige;
+        }
+
+        .mainframe>div{
+            width: 350px;
+            height:50px;
+            margin: 40px auto;
+            color:azure
+        }
+        .mainframe>div>span{
+            display: inline-block;
+            cursor: pointer;
+        }
+        .mainframe> div input{
+            width:100%;
+            height:100%;
+            background:transparent;
+            border: none;
+            border-bottom:solid white ;
+            outline:none;
+            color:azure
+        }
+        .mainframe #dd{
+            width:200px;
+            height:50px;
+            border-radius: 50px;
+            background-image: linear-gradient(to right,#bc79d4,#f171fa);
+            text-align: center;
+            box-sizing: border-box;
+            font-size: 20px;
+            cursor: pointer;   
+            line-height: 50px;   
+        }
+        .text{
+            position: absolute;
+            top:50px;
+            left:60px;
+            text-align: left;
+            font-size: 60px;
+            color:antiquewhite;
+        }
+
+       
+
+        input[type="text"]::placeholder,
+        input[type="password"]::placeholder {
+        transition: all 0.5s ease;
+       }
+
+      input[type="text"]:hover::placeholder,
+      input[type="password"]:hover::placeholder {
+      transform: translateY(-15px);
+      }
+
+      input[type="text"]:focus::placeholder,
+      input[type="password"]:focus::placeholder {
+      opacity: 1;
+      }
+ 
+      input[type="text"]:not(:focus):not(:hover)::placeholder,
+      input[type="password"]:not(:focus):not(:hover)::placeholder {
+       transform: translateY(0);
+     }
+     #dd span{
+        transition:all 1s ease;
+     }
+     
+     #dd::after{
+        content: "点击进入!";
+        font-size: small;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        filter: blur(10px);
+        transition:all 1s ease;
+     }
+     #dd:hover::after{
+        top: 300px;
+        opacity: 1;
+        filter: blur(0);
+     }
+     #dd span:hover{
+        transform: translateY(-20px);
+     }
+     #dd span:not(:hover):not(:focus){
+        transform: translateY(0);
+     }
+     #dd2{
+        width:200px;
+        height:50px;
+        border-radius: 50px;
+        background-image: linear-gradient(to right,#bc79d4,#f171fa);
+        text-align: center;
+        box-sizing: border-box;
+        font-size: 20px;
+        cursor: pointer;   
+        line-height: 50px;   
+    }
+     
+
+
+    </style>
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js">//导入Jquery模块以便前端识别JS$相应函数</script>
+    <div class="main">
+    
+    <div class="text">
+        <span class="one"><strong>欢迎来到</strong></span>
+        <br>
+        <span><strong>教学</strong></span>
+        <br>
+        <span><strong>学生信息管理系统</strong></span>
+    </div>
+
+
+    <div class="mainframe">
+        <p class="loginword" style="margin-top:20px;"><strong>新用户注册</strong></p>
+        <div class="账号">
+            <label class="user">
+                <span></span>
+                <span>创建新用户名</span>
+                <input type="text" placeholder="输入用户名" id="name">
+            </label>
+        </div>
+        
+        <div class="密码">
+            <label class="pass">
+                <span></span>
+                <span>输入新密码</span>
+                <input type="password" placeholder="输入你的新密码,只允许有数字及大小写字母" id="pass">
+            </label>
+        </div>
+
+        <div class="密码">
+            <label class="pass">
+                <span></span>
+                <span>确认新密码</span>
+                <input type="password" placeholder="再次确认你的新密码" id="pass2">
+            </label>
+        </div>
+
+        <div > 
+            <input id="code" type="text" style="width:200px;height:50px;margin-top:20px;" placeholder="请输入右方验证码的答案"></input>
+            <img id="captchaImage" src="{{ image_path }}?{{ random_parameter }}" alt="captcha" style="position:absolute;margin-left:50px;border-radius:10px;margin-top:20px;">
+            <button id="change-captcha" style="position:absolute;margin-left:218px;margin-top:60px;background:rgba(225,255,255,0.3);border:none;outline:none;border-radius:5px;color:white;" onclick="changeCaptcha()">看不清?换一张</button>
+        </div>
+
+        <button id="dd" style="margin-left:130px;margin-top:50px;" onclick="return1()">
+                <span>返回登录</span>
+        </button>
+
+        <button id="dd2" style="position:absolute;margin-left:100px;margin-top:50px;">
+            <span>注册</span>
+        </button>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $("#dd2").on("click",function(e){
+            var name=$("#name").val();
+            var password=$("#pass").val();
+            var password2=$("#pass2").val();
+            var code=$("#code").val();
+            if(!name||!password||!code)
+            {
+                alert("您的信息没有填写完整,请填写完整后登录!");
+                return;
+            }
+            var unsafePattern = /['"%;)/\\]/;
+            if (unsafePattern.test(name) || unsafePattern.test(password)) {
+                alert("输入包含不安全字符，请重新输入!");
+               return;
+            }
+            if(password!=password2)
+            {
+                alert("两次密码输入不一致,请确认密码!");
+                return;
+            }
+            console.log(name,password);
+            if(name&&password){
+                $.post("/register_get",{name:name,password:password,code:code},function(data)
+                {
+                    if(data.success)
+                    alert("您的信息已成功注册!");
+                    else if(data.info=="此用户已经存在")
+                    alert("此用户已经存在,请确认后再输入!");
+                    else
+                    alert("验证码错误,请确认后再输入!");
+                });
+            }
+        });
+    });
+
+    function return1(){
+       
+        window.location.href="/login.html";
+    }
+
+    function changeCaptcha() {
+        // 向后端请求新的验证码图像
+        fetch('/change_captcha')
+            .then(response => response.json())
+            .then(data => {
+                const randomParameter = Math.random();
+                document.querySelector("img").src = data.image_path+"?"+randomParameter;
+            });
+    }
+
+
+</script>
+
+
+</body>
+</html>

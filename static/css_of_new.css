@@ -1,0 +1,128 @@
+/*这是new.html的样式表*/
+/*全局滚动条设置*/
+::-webkit-scrollbar {
+    width: 4px; /* 纵向滚动条*/
+    height: 4px; /* 横向滚动条 */
+    background-color: #fff;
+}
+
+/*定义滚动条轨道 内阴影*/
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+    background-color: #ccc;
+}
+
+/*定义滑块 内阴影*/
+::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+}
+
+/*顶部栏目的样式*/
+.top_area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 12%;
+    background-color: lightblue;
+    border-radius: 15px;
+}
+
+.system_info {
+    /*系统信息，在top_area内*/
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 70%;
+    height: 100%;
+}
+
+.custom_info {
+    /*用户信息，在top_area内*/
+    position: absolute;
+    left: 80%;
+    top: 0;
+    width: 20%;
+    height: 100%;
+}
+
+.head_image {
+    /*头像样式*/
+    position: absolute;
+    top: 20%;
+    border-radius: 50%;
+    height: 60%;
+    transition: all 0.6s;
+}
+
+
+.say_hello {
+    position: absolute;
+    top: 50%;
+    left: 20%;
+    margin-left: 10px;
+    color: black;
+
+}
+
+/*左侧栏目的样式*/
+.left_area {
+    position: absolute;
+    left: 0;
+    top: 12%;
+    width: 17%;
+    height: 88%;
+    bottom: 5px;
+    -webkit-box-shadow: 0 1px 8px rgba(0, 21, 41, .08);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+}
+
+.left_menu {
+    margin: 5% 10%;
+    height: 95%;
+    border-radius: 10px;
+    overflow-y: scroll;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+    box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
+}
+
+
+
+.left_menu_item {
+    width: 100%;
+    height: 10%;
+    border: none;
+    outline:none;
+    border-radius: 10px;
+    display: flex;
+    justify-self: center;
+    align-items: center;
+    transition: all 0.6s;
+    margin-top: 5px;
+}
+
+.left_menu_item strong{
+    margin:0 auto;
+}
+.left_menu_item:hover{
+    background-color: #c9e0e9;
+    box-shadow: 5px 5px 5px rgba(0,0,0,0.6);
+    cursor: pointer;
+}
+
+/*主栏目的样式*/
+.main_area {
+    position: absolute;
+    left: 27%;
+    top: 12%;
+    width: 73%;
+    height: 88%;
+    bottom: 5px;
+    overflow-y: scroll;
+}
+
+.material-symbols-outlined{
+    position:absolute;
+    margin-left: 23px;
+    margin-top: 25px;
+}

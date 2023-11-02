@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Student</title>
+    <link rel="stylesheet" type="text/css" href="../static/css_of_new.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script>
+        
+    </script>
+</head>
+
+<body>
+<header class="top_area">
+    <div class="system_info">
+        <font style=" position: absolute; top: 30% ; left: 20%;letter-spacing:5px; font-style: normal;font-weight: bolder;font-size: 30px;">{{name}}的学生管理系统</font>
+    </div>
+    <div class="custom_info">
+        <img class="head_image" src="../static/head.jpg" alt="头像">
+        <font class="say_hello"><strong>欢迎回来,{{name}}老师!</strong></font>
+    </div>
+</header>
+<div class="left_area">
+    <div class="left_menu">
+        {% for stu in students%}
+        <span class="material-symbols-outlined">person</span>
+        <div class="left_menu_item"><strong>{{stu.studentname}}</strong></div>
+        {% endfor %}
+    </div>
+
+</div>
+</div>
+<div class="main_area">
+    <div class="show_info_area">
+
+    </div>
+    <div class="manage_area">
+        <button class="manage_button">添加</button>
+        <button class="manage_button">修改</button>
+        <button class="manage_button">删除</button>
+
+    </div>
+</div>
+</body>
