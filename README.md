@@ -25,7 +25,7 @@ Web-Info-system 是一个小型的前端基于原生 HTML5,CSS3 及 Javascript,J
 你可以通过 git bash 克隆至你的文件夹中:
 
 ```sh
-   git clone https://github.com/ShibaCodingLife/web-info-system.git
+git clone https://github.com/ShibaCodingLife/web-info-system.git
 ```
 
 或者手动访问<https://github.com/ShibaCodingLife/Web-Info-system> 来获取。
@@ -45,9 +45,14 @@ Web-Info-system 是一个小型的前端基于原生 HTML5,CSS3 及 Javascript,J
 您可以运行以下命令来安装所需的依赖包:
 
 ```sh
-   pip install -U poetry
-   poetry install
-   npm install --prefix ./static argon2-browser
+pip install -U poetry
+poetry install --no-root
+npm install --prefix ./static argon2-browser
+```
+
+使用以下命令运行
+```sh
+poetry run flask run
 ```
 
 ### 使用 Pillow 进行图像处理
