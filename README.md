@@ -25,7 +25,7 @@ Web-Info-system 是一个小型的前端基于原生 HTML5,CSS3 及 Javascript,J
 你可以通过 git bash 克隆至你的文件夹中:
 
 ```sh
-   git clone https://github.com/your-username/web-info-system.git
+   git clone https://github.com/ShibaCodingLife/web-info-system.git
 ```
 
 或者手动访问<https://github.com/ShibaCodingLife/Web-Info-system>来获取。
