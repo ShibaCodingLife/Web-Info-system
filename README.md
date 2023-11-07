@@ -1,11 +1,12 @@
-# 关于Web-Info-system
+# 关于 Web-Info-system
 
 ## 项目介绍
 
-Web-Info-system 是一个小型的前端基于原生HTML5,CSS3及Javascript,Jquery和Bootstrap,后端基于Flask及图像处理库Pillow构建的Web学生信息管理系统。该系统允许用户查看、编辑和删除学生信息，提供了直观的用户界面和后端数据处理逻辑。
+Web-Info-system 是一个小型的前端基于原生 HTML5,CSS3 及 Javascript,Jquery 和 Bootstrap,后端基于 Flask 及图像处理库 Pillow 构建的 Web 学生信息管理系统。该系统允许用户查看、编辑和删除学生信息，提供了直观的用户界面和后端数据处理逻辑。
 
 ## 主要特性
-- 登录注册功能,包括防止SQL注入,提供验证码验证功能及刷新功能
+
+- 登录注册功能,包括防止 SQL 注入,提供验证码验证功能及刷新功能
 - 查看全部学生信息
 - 动态修改学生信息
 - 删除学生记录
@@ -19,30 +20,37 @@ Web-Info-system 是一个小型的前端基于原生HTML5,CSS3及Javascript,Jque
 
 ## 如何运行
 
-1. 克隆仓库
+### 克隆仓库
 
-你可以通过git bash克隆至你的文件夹中:
+你可以通过 git bash 克隆至你的文件夹中:
+
 ```sh
    git clone https://github.com/ShibaCodingLife/web-info-system.git
 ```
 
-或者手动访问https://github.com/ShibaCodingLife/Web-Info-system 来获取。
+或者手动访问<https://github.com/ShibaCodingLife/Web-Info-system> 来获取。
 
-2. 安装依赖
+### 安装依赖
 
-确保您的系统已安装以下依赖,请确保在安装依赖之前激活您的Python虚拟环境：
+确保您的系统已安装以下依赖,请确保在安装依赖之前激活您的 Python 虚拟环境：
 
-- Python 3.8.16
-- Flask 3.0.0
-- Werkzeug 3.0.1
+- Python
+- poetry
+  - Flask
+  - Werkzeug
+  - PyYAML
+- npm
+  - argon2-browser
 
-您可以运行以下命令来安装所需的Python包:
+您可以运行以下命令来安装所需的依赖包:
 
 ```sh
-    pip install Flask==3.0.0 Werkzeug==3.0.1
- ```
+   pip install -U poetry
+   poetry install
+   npm install --prefix ./static argon2-browser
+```
 
-3. 使用 Pillow 进行图像处理
+### 使用 Pillow 进行图像处理
 
 该项目使用 Pillow 库来进行图像处理，这包括图像绘制、添加文本、应用滤镜等功能。
 
@@ -51,7 +59,9 @@ Web-Info-system 是一个小型的前端基于原生HTML5,CSS3及Javascript,Jque
 ```sh
 pip install Pillow
 ```
+
 在进行简单的验证:
+
 ```sh
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
@@ -73,18 +83,15 @@ blurred_image = image.filter(ImageFilter.BLUR)
 # 保存修改后的图像
 blurred_image.save('output.jpg')
 ```
+
 如果调试正确就说明配置没有问题了。
 
-4. CDN导入
+### CDN 导入
 
-在前端中通过link方式导入了google icon,bootstrap的css和js以及jquery,旨在减小项目体积方便使用,注意查看您的网络状态,确认这些包体和组件已经成功导入。
+在前端中通过 link 方式导入了 google icon,bootstrap 的 css 和 js 以及 jquery,旨在减小项目体积方便使用,注意查看您的网络状态,确认这些包体和组件已经成功导入。
 
-5. 运行项目并调试
+### 运行项目并调试
+
 ## 版本与技术说明
-由于是原生JS,功能实现较为麻烦,目前的项目不是很成熟,包括前端界面以及后端的功能并没有达到预期效果,需要继续进行完善。
 
-
-
-
-
-
+由于是原生 JS,功能实现较为麻烦,目前的项目不是很成熟,包括前端界面以及后端的功能并没有达到预期效果,需要继续进行完善。
