@@ -20,9 +20,13 @@ Web-Info-system 是一个小型的前端基于原生HTML5,CSS3及Javascript,Jque
 ## 如何运行
 
 1. 克隆仓库
+
+你可以通过git bash克隆至你的文件夹中:
 ```sh
    git clone https://github.com/your-username/web-info-system.git
 ```
+
+或者手动访问https://github.com/ShibaCodingLife/Web-Info-system来获取。
 
 2. 安装依赖
 
@@ -71,16 +75,16 @@ blurred_image.save('output.jpg')
 ```
 如果调试正确就说明配置没有问题了。
 
-4. 运行项目并调试
+4. CDN导入
+
+在前端中通过link方式导入了google icon,bootstrap的css和js以及jquery,旨在减小项目体积方便使用,注意查看您的网络状态,确认这些包体和组件已经成功导入。
+
+5. 运行项目并调试
 ## 版本与技术说明
-由于是原生JS,功能实现较为麻烦,目前的项目不是很成熟,包括前端界面以及后端的功能完善并没有达到预期效果,需要继续进行完善
+由于是原生JS,功能实现较为麻烦,目前的项目不是很成熟,包括前端界面以及后端的功能并没有达到预期效果,需要继续进行完善。
 
 
-## 基本功能展示
-   ![Alt text](/static/test/login.png "登录界面测试")
-   ![Alt text](/static/test/register.png "注册界面测试")
-   ![Alt text](/static/test/main.png "主界面测试")
-   ![Alt text](/static/test/fix_info.png "信息界面测试")
+
 
 
 
