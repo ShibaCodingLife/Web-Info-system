@@ -156,6 +156,43 @@ def new_html():
     image.save(image_path)
     return render_template('register.html',image_path=image_path, code=code)
 
+@app.route("/all_get",methods=['POST'])#前端点击获取所有关于老师学生信息并渲染至表格中
+def get_info():
+     name = request.form.get('name')
+     print(name)
+     students = Teacher_stu_info.query.filter_by(teachername=name).all()
+     student_list = [{'name': student.studentname,'number':student.studentnumber,'sex':student.studentsex,'age':student.studentage,'origin':student.studentorigin,'sdept':student.studentsdept} for student in students]  # 用你的实际字段替换
+     return jsonify({'students':student_list})#以json格式返回
+     
+@app.route('/delete_student', methods=['POST'])#删除当前行学生
+def delete_student():
+    student_number = request.form.get('student_number')
+    # 在数据库中查找该学号的学生
+    student = Teacher_stu_info.query.filter_by(studentnumber=student_number).first()
+    if student:
+        db.session.delete(student)  # 删除学生记录
+        db.session.commit()  # 提交更改
+        return jsonify({'success': True,'studentName': student.studentname})#将名字交给前端用于删除菜单左侧名单
+    else:
+        return jsonify({'success': False, 'error': '删除错误'})
+
+@app.route('/update_student/<student_id>', methods=['POST'])
+def update_student(student_id):
+    data = request.get_json()#获取json文件
+    student = Teacher_stu_info.query.filter_by(studentnumber=student_id).first()
+    print(student_id)
+    print(data['number'],data['age'],data['address'], data['sdept'])
+    print(student.studentnumber,student.studentage)
+    if student:
+        student.studentnumber = data['number']
+        student.studentage = data['age']
+        student.studentorigin = data['address']
+        student.studentsdept = data['sdept']
+        db.session.commit()
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False}), 404
+
 
 if __name__ == '__main__':
     app.run()
