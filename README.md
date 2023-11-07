@@ -34,14 +34,20 @@ Web-Info-system 是一个小型的前端基于原生 HTML5,CSS3 及 Javascript,J
 
 确保您的系统已安装以下依赖,请确保在安装依赖之前激活您的 Python 虚拟环境：
 
-- Python 3.8.16
-- Flask 3.0.0
-- Werkzeug 3.0.1
+- Python
+- poetry
+  - Flask
+  - Werkzeug
+  - PyYAML
+- npm
+  - argon2-browser
 
-您可以运行以下命令来安装所需的 Python 包:
+您可以运行以下命令来安装所需的依赖包:
 
 ```sh
+   pip install -U poetry
    poetry install
+   npm install --prefix ./static argon2-browser
 ```
 
 ### 使用 Pillow 进行图像处理
