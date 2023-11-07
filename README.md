@@ -23,10 +23,10 @@ Web-Info-system 是一个小型的前端基于原生HTML5,CSS3及Javascript,Jque
 
 你可以通过git bash克隆至你的文件夹中:
 ```sh
-   git clone https://github.com/your-username/web-info-system.git
+   git clone https://github.com/ShibaCodingLife/web-info-system.git
 ```
 
-或者手动访问https://github.com/ShibaCodingLife/Web-Info-system来获取。
+或者手动访问https://github.com/ShibaCodingLife/Web-Info-system 来获取。
 
 2. 安装依赖
 
