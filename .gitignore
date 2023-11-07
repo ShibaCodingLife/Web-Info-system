@@ -5,6 +5,7 @@ config.yaml
 .vscode
 geckodriver.log
 *.db
+!shiba.db
 node_modules
 captcha.png
 
