@@ -5,7 +5,11 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Student Info Management System</title>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login.css') }}" />
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="{{ url_for('static', filename='login.css') }}"
+		/>
 		<script src="{{ url_for('static', filename='node_modules/argon2-browser/dist/argon2-bundled.min.js') }}"></script>
 	</head>
 	<body>
@@ -50,7 +54,7 @@
 					/>
 					<img
 						id="captchaImage"
-						src="{{ image_path }}?{{ random_parameter }}"
+						src="{{ image_path }}"
 						alt="captcha"
 						style="
 							position: absolute;
@@ -110,8 +114,9 @@
 						return;
 					}
 					if (name && password) {
-						argon2.hash({pass: password, salt: "SIMS_NaCl"})
-							.then(res => {
+						argon2
+							.hash({ pass: password, salt: "SIMS_NaCl" })
+							.then((res) => {
 								$.post(
 									"/login_get",
 									{ name: name, password: res.hashHex, code: code },
@@ -120,14 +125,14 @@
 											/*处理返回的data,如果成功找到就返回成功并重定向,重定向不一定需要后端才可以,前端的window.location.href更简洁一点,注意即使
 						用了重定向后端也要写一个关于此页面的接口,这是flask的规定,你可以看到我在app.py中写了一个叫@app.route('/new.html') def new_page():的接口就是为了程序重定向是能找到位置*/
 											alert("登录成功,欢迎您!");
-											window.location.href = "/new.html?name=" + name;
-										} else if (data.info == "学生信息错误")
-											alert("认证信息错误,请确认后输入!");
-										else alert("验证码错误,请确认后再登录!");
+											window.location.href = "/new.html";
+										} else {
+											alert(data.info);
+										}
 									}
 								);
 							})
-							.catch(err => {
+							.catch((err) => {
 								console.log(err);
 								alert(err);
 							});
@@ -141,8 +146,10 @@
 					.then((response) => response.json())
 					.then((data) => {
 						const randomParameter = Math.random(); //这一块,旨在更新image的路径防止浏览器缓存使得图片不更新,只要能让路径实时变化就行
-						document.querySelector("img").src =
-							data.image_path + "?" + randomParameter;
+						document.querySelector("img").src = data.image_path;
+					})
+					.catch((err) => {
+						console.log(err);
 					});
 			}
 

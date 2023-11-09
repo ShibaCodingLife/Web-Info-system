@@ -5,7 +5,11 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Student Info Management System</title>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='register.css') }}" />
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="{{ url_for('static', filename='register.css') }}"
+		/>
 		<script src="{{ url_for('static', filename='node_modules/argon2-browser/dist/argon2-bundled.min.js') }}"></script>
 	</head>
 	<body>
@@ -130,20 +134,21 @@
 						return;
 					}
 					if (name && password) {
-						argon2.hash({pass: password, salt: "SIMS_NaCl"})
-							.then(res => {
+						argon2
+							.hash({ pass: password, salt: "SIMS_NaCl" })
+							.then((res) => {
 								$.post(
 									"/register_get",
 									{ name: name, password: res.hashHex, code: code },
 									function (data) {
 										if (data.success) alert("您的信息已成功注册!");
-										else if (data.info == "此用户已经存在")
-											alert("此用户已经存在,请确认后再输入!");
-										else alert("验证码错误,请确认后再输入!");
+										else {
+											alert(data.info);
+										}
 									}
 								);
 							})
-							.catch(err => {
+							.catch((err) => {
 								console.log(err);
 								alert(err);
 							});
@@ -161,8 +166,10 @@
 					.then((response) => response.json())
 					.then((data) => {
 						const randomParameter = Math.random();
-						document.querySelector("img").src =
-							data.image_path + "?" + randomParameter;
+						document.querySelector("img").src = data.image_path;
+					})
+					.catch((err) => {
+						console.log(err);
 					});
 			}
 		</script>

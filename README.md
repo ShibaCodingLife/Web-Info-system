@@ -39,6 +39,8 @@ git clone https://github.com/ShibaCodingLife/web-info-system.git
   - Flask
   - Werkzeug
   - PyYAML
+  - pycryptodome
+  - Pydantic
 - npm
   - argon2-browser
 
