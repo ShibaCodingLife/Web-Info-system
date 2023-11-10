@@ -23,8 +23,10 @@
 					let $tableBody = $("table tbody");
 					// 收集表单数据
 					let studentData = {
+						name: $("#stu-name").val(),
 						number: $("#stu-number").val(),
 						age: $("#stu-age").val(),
+						sex: $("#stu-sex").val(),
 						address: $("#stu-addtress").val(),
 						sdept: $("#stu-sdept").val(),
 					};
@@ -110,9 +112,8 @@
 						  let studentNumber = $(this).data('number');
 						  console.log(studentNumber); //获取学号
 						  $.ajax({
-							  url: '/delete_student',  // 后端路由地址
-							  type: 'POST',
-							  data: {student_number: studentNumber},  // 发送学生学号
+							  url: '/delete_student/' + studentNumber,  // 后端路由地址
+							  type: 'DELETE',
 							  success: function(response) {
 								// 如果后端返回成功响应，则移除行
 								if (response.success) {
@@ -337,6 +338,24 @@
 									class="form-control"
 									id="stu-age"
 									placeholder="输入修改后的年龄"
+								/>
+							</div>
+							<div class="mb-3">
+								<label for="editStudentEmail" class="form-label">年龄</label>
+								<input
+									type="email"
+									class="form-control"
+									id="stu-name"
+									placeholder="输入修改后的姓名"
+								/>
+							</div>
+							<div class="mb-3">
+								<label for="editStudentEmail" class="form-label">年龄</label>
+								<input
+									type="email"
+									class="form-control"
+									id="stu-sex"
+									placeholder="输入修改后的性别"
 								/>
 							</div>
 							<div class="mb-3">

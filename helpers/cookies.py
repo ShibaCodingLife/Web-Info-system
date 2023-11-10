@@ -1,4 +1,4 @@
-from flask import Flask, Response, request, render_template, jsonify, redirect, make_response
+from flask import Response, request, redirect
 from base64 import b64encode, b64decode
 from Crypto.Cipher import AES
 from pydantic import BaseModel

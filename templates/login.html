@@ -124,8 +124,7 @@
 										if (data.success) {
 											/*处理返回的data,如果成功找到就返回成功并重定向,重定向不一定需要后端才可以,前端的window.location.href更简洁一点,注意即使
 						用了重定向后端也要写一个关于此页面的接口,这是flask的规定,你可以看到我在app.py中写了一个叫@app.route('/new.html') def new_page():的接口就是为了程序重定向是能找到位置*/
-											alert("登录成功,欢迎您!");
-											window.location.href = "/new.html";
+											window.location.href = "/";
 										} else {
 											alert(data.info);
 										}
@@ -154,7 +153,7 @@
 			}
 
 			function register() {
-				window.location.href = "/register.html";
+				window.location.href = "/register";
 			}
 		</script>
 	</body>

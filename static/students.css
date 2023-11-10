@@ -1,0 +1,184 @@
+body {
+	font-family: "Arial", sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: rgb(237, 236, 236);
+}
+
+header {
+	background-color: #232136;
+	color: #e0dede;
+	text-align: center;
+	padding: 20px;
+	position: relative;
+	border-radius: 0 0 30px 30px;
+}
+
+header h1 {
+	margin: 15px;
+	font-size: 40px;
+	transition: font-size 0.3s;
+}
+
+.user-info {
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
+	display: flex;
+	align-items: center;
+}
+
+.teacher-name {
+	cursor: pointer;
+	transition: color 0.3s;
+}
+
+.teacher-name:hover {
+	color: #c7c7c7;
+}
+
+.dropdown-content {
+	cursor: pointer;
+	color: #e0dede;
+	position: absolute;
+	background-color: #3498db;
+	box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+	padding: 8px;
+	border-radius: 5px;
+	z-index: 1;
+	opacity: 0;
+	transform: translateY(-10px);
+	transition: opacity 0.3s, transform 0.3s, background-color 0.3s;
+}
+
+.dropdown-content:hover {
+	background-color: #2980b9;
+}
+
+.dropdown.show-dropdown .dropdown-content {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+main {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
+
+.student-card {
+	background-color: #ecf0f1;
+	border: 1px solid #bdc3c7;
+	border-radius: 10px;
+	padding: 30px;
+	margin: 20px;
+	cursor: pointer;
+	overflow: hidden;
+	transition: all 0.3s ease-in-out;
+	position: relative;
+	width: 200px;
+	transition: transform 0.3s height 0.3s ease-in-out;
+}
+
+.student-card:hover {
+	transform: scale(1.05); /* Expand a little on hover */
+}
+
+.student-card h2 {
+	color: #3498db;
+	margin-bottom: 10px;
+}
+
+.new-student-card {
+	display: none;
+}
+
+.students-container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	max-width: 1300px;
+	margin: 0 auto;
+}
+
+.info {
+	display: block;
+}
+
+.editor {
+	display: none;
+}
+
+.editor label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+.editor input {
+	width: calc(100% - 10px);
+	margin-bottom: 10px;
+	padding: 5px;
+}
+
+.editor-btn {
+	background-color: #3498db;
+	color: #fff;
+	padding: 5px 10px;
+	margin: 6px;
+	border: none;
+	cursor: pointer;
+	border-radius: 5px;
+}
+
+.add-btn {
+	display: block;
+	max-height: 128px;
+	margin: 40px auto;
+}
+
+.search-container {
+	margin-left: 20px;
+	display: flex;
+	align-items: center;
+}
+
+#search-input {
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	margin-right: 5px;
+	font-size: 14px;
+	transition: border 0.3s;
+}
+
+#search-wrapper {
+	overflow: hidden;
+	width: 0;
+	opacity: 0;
+	transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+#search-wrapper.active {
+	width: 200px;
+	opacity: 1;
+}
+
+#search-input:focus {
+	outline: none;
+	border: 1px solid #3498db;
+}
+
+#search-btn {
+	padding: 10px 15px;
+	cursor: pointer;
+	background-color: #3498db;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	font-size: 14px;
+	transition: background-color 0.3s;
+}
+
+#search-btn:hover {
+	background-color: #2980b9;
+}

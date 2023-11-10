@@ -1,5 +1,3 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from . import config
 from . import cookies
 from . import database
@@ -11,6 +9,7 @@ __ALL__ = ("config", "cookies", "database", "captcha", "init")
 def init():
     cfg = config.get_config()
     config.update_config(cfg)
+    config.config_logging(cfg)
 
     app, db, TeacherInfo, TeacherStudentInfo = database.init(cfg)
 

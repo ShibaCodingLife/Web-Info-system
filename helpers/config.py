@@ -3,55 +3,41 @@ import sys
 import yaml
 import logging
 from pathlib import Path
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 __ALL__ = ("get_config", "update_config", "config_logging", "Config")
 
 
 class Config(BaseModel):
     class DBConfig(BaseModel):
-        uri: str
+        uri: str = "sqlite:///shiba.db"
         username: str = ""
         password: str = ""
 
     class CookiesConfig(BaseModel):
-        aes_key: str  # Encryption key (must be 16, 24, or 32 bytes long)
-        expire_sec: int
+        # Encryption key (must be 16, 24, or 32 bytes long)
+        aes_key: str = "shiba_is_best&&$@SDU%^%#peropero"
+        expire_sec: int = 3600 * 24 * 7  # 7 days
 
     class GreetingConfig(BaseModel):
-        max_sessions: int
-        expire_sec: int
+        max_sessions: int = 2048
+        expire_sec: int = 300
 
-    version: int
-    debug: bool
-    cookies: CookiesConfig
-    greeting: GreetingConfig  # used for login & register
-    logging: dict
-    db: DBConfig
+    class ExperiementalConfig(BaseModel):
+        replace_new_with_students: bool = False
+
+    version: int = 3
+    debug: bool = True
+    cookies: CookiesConfig = Field(default_factory=CookiesConfig)
+    greeting: GreetingConfig = Field(default_factory=GreetingConfig)
+    logging: dict = Field(default_factory=dict)
+    db: DBConfig = Field(default_factory=DBConfig)
+    experimental: ExperiementalConfig = Field(default_factory=ExperiementalConfig)
 
 
-DEFAULT_CONFIG = Config.model_validate({
-    "version": 2,
-    "debug": True,
-    "cookies": {
-        "aes_key": "shiba_is_best&&$@SDU%^%#peropero",
-        "expire_sec": 3600 * 24 * 7,  # 7 days
-    },
-    "greeting": {
-        "max_sessions": 2048,
-        "expire_sec": 300,
-    },
-    "logging": {
-        "level": "DEBUG",
-        "format": "%(asctime)s %(levelname)s %(name)s %(message)s",
-    },
-    "db": {
-        "uri": "sqlite:///shiba.db"
-    }
-})
-
-CONFIG_PATH = Path(sys.modules["__main__"].__file__).parent / "config.yaml"
-LOG_PATH = Path(sys.modules["__main__"].__file__).parent / "app.log"
+DEFAULT_CONFIG = Config()
+CONFIG_PATH = Path(__file__).parent.parent / "config.yaml"
+LOG_PATH = Path(__file__).parent.parent / "app.log"
 
 
 def get_config() -> Config:

@@ -25,10 +25,9 @@ def home():
     cookies = request.cookies.get("cookies")
     if not cookies or not validate_cookies(cookies):
         return redirect("/login")
+    if config.experimental.replace_new_with_students:
+        return redirect("/students")
     return redirect("/new.html")
-
-
-# 显示登录页面，仅允许GET请求
 
 
 @app.route("/login", methods=["GET"])
@@ -45,12 +44,22 @@ def login():
     return res
 
 
+@app.route("/logout", methods=["GET"])
+def logout():
+    res = make_response(redirect("/login"))
+    res.set_cookie("cookies", "", httponly=True)
+    return res
+
+
 @app.route("/login_get", methods=["POST"])  # 允许处理前端的post请求
 def login_get():
     name = request.form.get("name")
     password = request.form.get("password")
     code = request.form.get("code")
     session_id = request.cookies.get("session_id")
+
+    if not session_id:
+        return redirect("/login")
 
     if not name or not password or not code:
         return jsonify({"success": False, "code": 1, "info": "信息不完整"})
@@ -88,6 +97,9 @@ def register_get():
     code = request.form.get("code")
     session_id = request.cookies.get("session_id")
 
+    if not session_id:
+        return redirect("/register")
+
     if not name or not password or not code:
         return jsonify({"success": False, "code": 1, "info": "信息不完整"})
 
@@ -118,7 +130,7 @@ def change_captcha():
         return jsonify({"success": False, "code": -1, "info": "未知错误, 请刷新界面"})
     code = generate_random_code()
     image = generate_image(code)
-    code_map[session_id] = code
+    code_map[session_id] = code.lower()
     b = io.BytesIO()
     image.save(b, "jpeg")
     image_path = f"data:image/jpeg;base64,{b64encode(b.getvalue()).decode()}"
@@ -160,6 +172,22 @@ def register_html():
     return res
 
 
+@app.route("/students", methods=["GET"])
+@login_required()
+def students():
+    cookies = request.cookies.get("cookies")
+    cookies = decrypt_cookies(cookies)
+    name = cookies.username
+    students = Teacher_stu_info.query.filter_by(teachername=name).all()
+    return render_template("students.html", teacher_name=name, students=students)
+
+
+@app.route("/search/<search_input>", methods=["POST"])
+@login_required()
+def search(search_input):
+    raise NotImplementedError
+
+
 @app.route("/all_get", methods=["POST"])  # 前端点击获取所有关于老师学生信息并渲染至表格中
 @login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
 def get_info():
@@ -174,24 +202,23 @@ def get_info():
     return jsonify({"students": student_list})  # 以json格式返回
 
 
-@app.route("/delete_student", methods=["POST"])  # 删除当前行学生
+@app.route("/delete_student/<student_id>", methods=["DELETE"])  # 删除当前行学生
 @login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
-def delete_student():
-    student_number = request.form.get("student_number")
+def delete_student(student_id):
     # 在数据库中查找该学号的学生
     student = Teacher_stu_info.query.filter_by(
-        studentnumber=student_number).first()
+        studentnumber=student_id).first()
     if student:
         db.session.delete(student)  # 删除学生记录
         db.session.commit()  # 提交更改
         # 将名字交给前端用于删除菜单左侧名单
         return jsonify({"success": True, "studentName": student.studentname})
     else:
-        return jsonify({"success": False, "code": 4404, "error": "没有该学生信息"})
+        return jsonify({"success": False, "code": 4404, "info": "没有该学生信息"})
 
 
 @app.route("/update_student/<student_id>", methods=["POST"])
-@login_required()
+@login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
 def update_student(student_id):
     data = request.get_json()  # 获取json文件
     student = Teacher_stu_info.query.filter_by(
@@ -200,14 +227,42 @@ def update_student(student_id):
     logging.debug("Update student : student_id: %s, data: %s",
                   student_id, data)
     if student:
-        student.studentnumber = data["number"]
-        student.studentage = data["age"]
-        student.studentorigin = data["address"]
-        student.studentsdept = data["sdept"]
+        try:
+            student.studentnumber = data["number"]
+            student.studentname = data["name"]
+            student.studentage = data["age"]
+            student.studentsex = data["sex"]
+            student.studentorigin = data["address"]
+            student.studentsdept = data["sdept"]
+        except KeyError:
+            return jsonify({"success": False, "code": 4402, "info": "信息不完整"})
         db.session.commit()
         return jsonify({"success": True})
     else:
         return jsonify({"success": False, "code": 4404, "info": "没有该学生信息"})
+
+
+@app.route("/add_student", methods=["POST"])
+@login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
+def add_student():
+    data = request.get_json()
+    cookies = request.cookies.get("cookies")
+    cookies = decrypt_cookies(cookies)
+    name = cookies.username
+
+    try:
+        new_stu = Teacher_stu_info(teachername=name, studentname=data["name"], studentnumber=data["number"],
+                                   studentage=data["age"], studentsex=data["sex"],
+                                   studentsdept=data["sdept"], studentorigin=data["address"],
+                                   )
+    except KeyError:
+        return jsonify({"success": False, "code": 4402, "info": "信息不完整"})
+
+    db.session.add(new_stu)
+    db.session.flush()
+    new_id = new_stu.studentnumber
+    db.session.commit()
+    return jsonify({"success": True, "student_id": new_id})
 
 
 @app.route('/search-by-name', methods=['POST'])  # 通过学生姓名查询
@@ -228,5 +283,4 @@ def search_by_name():
 
 
 if __name__ == "__main__":
-    db.create_all()
     app.run()

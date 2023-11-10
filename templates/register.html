@@ -141,7 +141,10 @@
 									"/register_get",
 									{ name: name, password: res.hashHex, code: code },
 									function (data) {
-										if (data.success) alert("您的信息已成功注册!");
+										if (data.success) {
+											alert("您的信息已成功注册!");
+											window.location.href = "/login";
+										}
 										else {
 											alert(data.info);
 										}
