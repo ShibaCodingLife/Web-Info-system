@@ -364,7 +364,7 @@ def delete_student():
         # 将名字交给前端用于删除菜单左侧名单
         return jsonify({"success": True, "studentName": student.studentname})
     else:
-        return jsonify({"success": False, "code": 100, "error": "删除错误"})
+        return jsonify({"success": False, "code": 4404, "error": "没有该学生信息"})
 
 
 @app.route("/update_student/<student_id>", methods=["POST"])
@@ -387,17 +387,25 @@ def update_student(student_id):
         db.session.commit()
         return jsonify({"success": True})
     else:
-        return jsonify({"success": False}), 404
-    
-@app.route('/search-by-name',methods=['POST'])#通过学生姓名查询
+        return jsonify({"success": False, "code": 4404, "info": "没有该学生信息"})
+
+
+@app.route('/search-by-name', methods=['POST'])  # 通过学生姓名查询
 def search_by_name():
-     name = request.form.get('name')
-     students=Teacher_stu_info.query.filter_by(studentname=name).all()
-     if students:
-        student_list = [{'name': student.studentname,'number':student.studentnumber,'sex':student.studentsex,'age':student.studentage,'origin':student.studentorigin,'sdept':student.studentsdept} for student in students]  # 用你的实际字段替换
+    cookies = request.cookies.get("cookies")
+    if not cookies or not validate_cookies(cookies):
+        return redirect("/login")
+    cookies = decrypt_cookies(cookies)
+    name = cookies.username
+
+    students = Teacher_stu_info.query.filter_by(studentname=name).all()
+    if students:
+        student_list = [{'name': s.studentname, 'number': s.studentnumber, 'sex': s.studentsex,
+                         'age': s.studentage, 'origin': s.studentorigin, 'sdept': s.studentsdept}
+                        for s in students]  # 用你的实际字段替换
         return jsonify({'success': True, 'student': student_list})
-     else:
-        return jsonify({'success':False})
+    else:
+        return jsonify({'success': False, "code": 4404, "info": "没有该学生信息"})
 
 
 if __name__ == "__main__":
