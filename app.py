@@ -1,153 +1,23 @@
-import random
 import io
-import os
-import sys
-import yaml
 import logging
+import helpers
 # 需要导入的包体,flask,request不用说,render_template用来渲染定位, jsonify是后端传给前端的数据格式以便前端获取其中的信息来做出判断,redirect重定向
-from flask import Flask, request, render_template, jsonify, redirect, make_response
-from flask_sqlalchemy import SQLAlchemy
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from pathlib import Path
-from base64 import b64encode, b64decode
-from Crypto.Cipher import AES
-from pydantic import BaseModel
-from datetime import datetime, timedelta
 from uuid import uuid4
+from base64 import b64encode
 from cachetools import TTLCache
+from datetime import datetime, timedelta
+from flask import request, render_template, jsonify, redirect, make_response
+from helpers.cookies import login_required, validate_cookies
+from helpers.cookies import decrypt_cookies, encrypt_cookies, Cookies
+from helpers.captcha import generate_random_code, generate_image
 
+config, app, db, Student_base_info, Teacher_stu_info = helpers.init()
 
-class Config(BaseModel):
-    class DBConfig(BaseModel):
-        uri: str
-        username: str = ""
-        password: str = ""
-
-    class CookiesConfig(BaseModel):
-        aes_key: str  # Encryption key (must be 16, 24, or 32 bytes long)
-        expire_sec: int
-
-    class GreetingConfig(BaseModel):
-        max_sessions: int
-        expire_sec: int
-
-    version: int
-    debug: bool
-    cookies: CookiesConfig
-    greeting: GreetingConfig  # used for login & register
-    logging: dict
-    db: DBConfig
-
-
-DEFAULT_CONFIG = Config.model_validate({
-    "version": 2,
-    "debug": True,
-    "cookies": {
-        "aes_key": "shiba_is_best&&$@SDU%^%#peropero",
-        "expire_sec": 3600 * 24 * 7,  # 7 days
-    },
-    "greeting": {
-        "max_sessions": 2048,
-        "expire_sec": 300,
-    },
-    "logging": {
-        "level": "DEBUG",
-        "format": "%(asctime)s %(levelname)s %(name)s %(message)s",
-    },
-    "db": {
-        "uri": "sqlite:///shiba.db"
-    }
-})
-
-
-class Cookies(BaseModel):
-    username: str
-    token: str
-    expire: datetime
-
-
-CONFIG_PATH = Path(__file__).parent / "config.yaml"
-LOG_PATH = Path(__file__).parent / "app.log"
-
-if not CONFIG_PATH.exists():
-    with open(CONFIG_PATH, "w") as f:
-        yaml.dump(DEFAULT_CONFIG.model_dump(), f)
-with open(CONFIG_PATH) as f:
-    config = Config.model_validate(yaml.safe_load(f))
-
-if config.version < DEFAULT_CONFIG.version:
-    os.rename(CONFIG_PATH, CONFIG_PATH.with_suffix(".bak"))
-    with open(CONFIG_PATH, "w") as f:
-        yaml.dump(DEFAULT_CONFIG.model_dump(), f)
-    print("Config file updated, old config file renamed to config.bak")
-    sys.exit(0)
-
-app = Flask(__name__)  # 初始化
-app.debug = config.debug
-# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:320421@localhost:3306/sakila"##数据库连接,在终端下载SQLAlchemy后用此命令连接,但有可能会出现mysql认证问题,所以建议再下一个cryptography 包,命令为pip install cryptography
-app.config["SQLALCHEMY_DATABASE_URI"] = config.db.uri
-db = SQLAlchemy(app)
-logging.basicConfig(filename=LOG_PATH, **config.logging)
-
-if app.debug:
-    logging.getLogger().addHandler(logging.StreamHandler())
+app.app_context().push()
 
 code_map = TTLCache[str, str](
     maxsize=config.greeting.max_sessions,
     ttl=config.greeting.expire_sec)
-
-
-class Student_base_info(db.Model):  # 构造对象
-    __tablename__ = "teacher_info"  # 定义是mysql中的哪一个表
-    id = db.Column(db.Integer, primary_key=True)
-    # 数据条定义,必须定义主键,否则flask会因在sqlite中找不到匹配模块而报错
-    name = db.Column(db.String(100))
-    password = db.Column(db.String(100))
-
-
-class Teacher_stu_info(db.Model):
-    __tablename__ = "teacher-stu"
-    id = db.Column(db.Integer, primary_key=True)
-    teachername = db.Column(db.String(100))
-    studentname = db.Column(db.String(100))
-    studentnumber = db.Column(db.String(100))
-    studentsex = db.Column(db.String(100))
-    studentage = db.Column(db.String(100))
-    studentorigin = db.Column(db.String(100))
-    studentsdept = db.Column(db.String(100))
-
-
-def encrypt_cookies(cookies: Cookies) -> str:
-    cipher = AES.new(config.cookies.aes_key.encode(), AES.MODE_GCM)
-    encrypted, digest = cipher.encrypt_and_digest(
-        cookies.model_dump_json().encode())
-    data = len(digest).to_bytes(1, "little") + \
-        digest + cipher.nonce + encrypted
-    return b64encode(data).decode()
-
-
-def decrypt_cookies(b64: str) -> Cookies:
-    data = b64decode(b64)
-    d_len = data[0]
-    digest = data[1:1+d_len]
-    cipher = AES.new(config.cookies.aes_key.encode(),
-                     AES.MODE_GCM, nonce=data[d_len + 1:d_len + 17])
-    decrypted: bytes = cipher.decrypt_and_verify(data[d_len + 17:], digest)
-    cookies = Cookies.model_validate_json(decrypted.decode())
-    return cookies
-
-
-def validate_cookies(cookies: str | Cookies) -> bool:
-    if isinstance(cookies, str):
-        try:
-            cookies = decrypt_cookies(cookies)
-        except ValueError:
-            return False
-
-    teacher_info = Student_base_info.query.filter_by(
-        name=cookies.username, password=cookies.token).first()
-
-    return teacher_info and cookies.expire > datetime.utcnow()
 
 
 @app.route('/')
@@ -241,48 +111,6 @@ def register_get():
     return jsonify({"success": True, "info": "注册成功"})
 
 
-def generate_random_code(length=4):
-    characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-    code = ''.join(random.choice(characters) for _ in range(length))
-    return code.lower()
-
-
-def generate_image(code):
-    image = Image.new("RGB", (150, 60), (255, 255, 255))
-    draw = ImageDraw.Draw(image)
-
-    # 使用艺术字体
-    with open("static/arial.ttf", "rb") as f:
-        # Well shit, I don't have arial.ttf on local OS
-        font = ImageFont.truetype(f, 40)
-
-    for i in range(4):
-        draw.text((10 + i * 30, 10), code[i], font=font, fill=(0, 0, 0))
-
-    for _ in range(20):
-        x1 = random.randint(0, 150)
-        y1 = random.randint(0, 60)
-        x2 = random.randint(0, 150)
-        y2 = random.randint(0, 60)
-        draw.line((x1, y1, x2, y2), fill=(0, 0, 0))
-
-    for _ in range(30):
-        x = random.randint(0, 150)
-        y = random.randint(0, 60)
-        draw.rectangle([x, y, x + 3, y + 3], fill=(0, 0, 0))
-
-    for _ in range(500):
-        x = random.randint(0, 150)
-        y = random.randint(0, 60)
-        r = random.randint(0, 255)
-        g = random.randint(0, 255)
-        b = random.randint(0, 255)
-        draw.point((x, y), fill=(r, g, b))
-
-    image = image.filter(ImageFilter.SMOOTH_MORE)
-    return image
-
-
 @app.route("/change_captcha")
 def change_captcha():
     session_id = request.cookies.get("session_id")
@@ -298,11 +126,9 @@ def change_captcha():
 
 
 @app.route("/new.html")  # 渲染此页面并查询所有带过的学生名单
+@login_required()
 def new_page():
     cookies = request.cookies.get("cookies")
-    if not cookies or not validate_cookies(cookies):
-        return redirect("/login")
-
     cookies = decrypt_cookies(cookies)
     name = cookies.username
     students = Teacher_stu_info.query.filter_by(teachername=name).all()
@@ -335,10 +161,9 @@ def register_html():
 
 
 @app.route("/all_get", methods=["POST"])  # 前端点击获取所有关于老师学生信息并渲染至表格中
+@login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
 def get_info():
     cookies = request.cookies.get("cookies")
-    if not cookies or not validate_cookies(cookies):
-        return redirect("/login")
     cookies = decrypt_cookies(cookies)
     name = cookies.username
     logging.debug("Get all info : name: %s", name)
@@ -350,10 +175,8 @@ def get_info():
 
 
 @app.route("/delete_student", methods=["POST"])  # 删除当前行学生
+@login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
 def delete_student():
-    cookies = request.cookies.get("cookies")
-    if not cookies or not validate_cookies(cookies):
-        return redirect("/login")
     student_number = request.form.get("student_number")
     # 在数据库中查找该学号的学生
     student = Teacher_stu_info.query.filter_by(
@@ -368,11 +191,8 @@ def delete_student():
 
 
 @app.route("/update_student/<student_id>", methods=["POST"])
+@login_required()
 def update_student(student_id):
-    cookies = request.cookies.get("cookies")
-    if not cookies or not validate_cookies(cookies):
-        return redirect("/login")
-
     data = request.get_json()  # 获取json文件
     student = Teacher_stu_info.query.filter_by(
         studentnumber=student_id).first()
@@ -391,10 +211,9 @@ def update_student(student_id):
 
 
 @app.route('/search-by-name', methods=['POST'])  # 通过学生姓名查询
+@login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
 def search_by_name():
     cookies = request.cookies.get("cookies")
-    if not cookies or not validate_cookies(cookies):
-        return redirect("/login")
     cookies = decrypt_cookies(cookies)
     name = cookies.username
 
@@ -409,4 +228,5 @@ def search_by_name():
 
 
 if __name__ == "__main__":
+    db.create_all()
     app.run()

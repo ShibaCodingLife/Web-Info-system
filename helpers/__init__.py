@@ -1,0 +1,20 @@
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from . import config
+from . import cookies
+from . import database
+from . import captcha
+
+__ALL__ = ("config", "cookies", "database", "captcha", "init")
+
+
+def init():
+    cfg = config.get_config()
+    config.update_config(cfg)
+
+    app, db, TeacherInfo, TeacherStudentInfo = database.init(cfg)
+
+    cookies.config = cfg
+    cookies.TeacherInfo = TeacherInfo
+
+    return cfg, app, db, TeacherInfo, TeacherStudentInfo
