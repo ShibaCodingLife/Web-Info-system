@@ -67,6 +67,83 @@
 				});
 			});
 
+
+			$(document).ready(function() {//搜索功能并回显
+				$("#buttonn").click(function(e) {
+					e.preventDefault();
+					var name = $("#input").val();
+					$.post("/search-by-name", { name: name }, function(data) {
+						console.log(data);
+						if (data.success) {
+							var rows = [];
+							var $tableBody = $('table tbody');
+							$tableBody.empty();
+							$.each(data.student, function(index, student) {
+							  var $row = $('<tr>').append( 
+								$('<td>').text(student.name),
+								$('<td>').addClass('student-number').text(student.number),
+								$('<td>').text(student.sex),
+								$('<td>').addClass('student-age').text(student.age),
+								$('<td>').addClass('student-address').text(student.origin),
+								$('<td>').addClass('student-sdept').text(student.sdept),
+								$('<td>').append(
+								$('<button>').addClass('btn btn-primary btn-sm').attr('data-number', student.number).text('修改'),
+								$('<button>').addClass('btn btn-danger btn-sm').attr('data-number', student.number).text('删除')
+								)
+							);
+							$tableBody.css("animation", "ani 1s ease-in-out forwards");
+							$tableBody.append($row);
+							});
+						} else {
+							alert("未找到关于这个学生的信息!");
+						}
+	
+						$tableBody.on('click', '.btn-primary', function() {//我想到有一种方法,就是使用bootstrap来实现模态框中间显现
+						  var $row = $(this).closest('tr');
+						  var studentNumber = $(this).data('number'); 
+						  $('#editStudentModal').attr('data-number', studentNumber);//存储起来
+						  $('#stu-number').val(studentNumber);
+						  $('#editStudentModal').modal('show');
+					  });
+					  
+					  $tableBody.on('click', '.btn-danger', function() {
+						  var $row = $(this).closest('tr');//先获取这一行的信息后通过学号删除
+						  var studentNumber = $(this).data('number');
+						  console.log(studentNumber); //获取学号
+						  $.ajax({
+							  url: '/delete_student',  // 后端路由地址
+							  type: 'POST',
+							  data: {student_number: studentNumber},  // 发送学生学号
+							  success: function(response) {
+								// 如果后端返回成功响应，则移除行
+								if (response.success) {
+								  $row.remove();
+								  //别忘了别忘了!还要删除左侧菜单的信息!-_-真麻烦...哭死好吧
+								  $('.left_menu strong').each(function() {
+									  if ($(this).text() === response.studentName) {
+										  $(this).closest('.left_menu_item').remove();
+									  }
+								  });
+								  alert("删除成功!");
+								} else {
+								  alert("删除逻辑错误");
+								}
+							  },
+							  error: function() {
+								alert('程序错误!');
+							  }
+							});
+					  });
+	
+					});
+					
+				});
+			});
+
+
+
+
+
 			$(document).ready(function () {
 				$("#info").on("click", function (e) {
 					var currentUrl = window.location.href;
@@ -99,6 +176,7 @@
 										.text("删除")
 								)
 							);
+							$tableBody.css("animation", "ani 1s ease-in-out forwards");//动态效果
 							$tableBody.append($row); // 将新行追加到表格中
 						});
 						$tableBody.on("click", ".btn-primary", function () {
@@ -184,7 +262,7 @@
 			id="input"
 			placeholder="输入您想要搜索的学生姓名"
 		/>
-		<div class="button" id="button">
+		<div class="button" id="buttonn">
 			<span class="material-symbols-outlined">search</span>搜索
 		</div>
 		<!-- 添加 .table-striped 和 .table-bordered 类来实现条纹和边框的效果 -->
