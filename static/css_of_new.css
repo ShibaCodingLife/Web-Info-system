@@ -177,7 +177,27 @@
     display: flex;
     justify-content: center;
   }
+  .button:hover{
+    cursor: pointer;
+    background-color: black;
+    color:white;
+    border-color: #fff;
+
+  }
   .btn{
     margin-left: 20px;
   }
+  .table{
+    animation: ani 0.7s ease-in-out forwards;
+}
+
+@keyframes ani{
+  0%{
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100%{
+    opacity: 1;
+  }
+}
 

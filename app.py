@@ -366,6 +366,16 @@ def update_student(student_id):
         return jsonify({"success": True})
     else:
         return jsonify({"success": False}), 404
+    
+@app.route('/search-by-name',methods=['POST'])#通过学生姓名查询
+def search_by_name():
+     name = request.form.get('name')
+     students=Teacher_stu_info.query.filter_by(studentname=name).all()
+     if students:
+        student_list = [{'name': student.studentname,'number':student.studentnumber,'sex':student.studentsex,'age':student.studentage,'origin':student.studentorigin,'sdept':student.studentsdept} for student in students]  # 用你的实际字段替换
+        return jsonify({'success': True, 'student': student_list})
+     else:
+        return jsonify({'success':False})
 
 
 if __name__ == "__main__":
