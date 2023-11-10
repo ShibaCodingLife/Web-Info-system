@@ -1,5 +1,7 @@
 import random
 import io
+import os
+import sys
 import yaml
 import logging
 # 需要导入的包体,flask,request不用说,render_template用来渲染定位, jsonify是后端传给前端的数据格式以便前端获取其中的信息来做出判断,redirect重定向
@@ -20,13 +22,15 @@ class Config(BaseModel):
         uri: str
         username: str = ""
         password: str = ""
+
     class CookiesConfig(BaseModel):
         aes_key: str  # Encryption key (must be 16, 24, or 32 bytes long)
         expire_sec: int
+
     class GreetingConfig(BaseModel):
         max_sessions: int
         expire_sec: int
-    
+
     version: int
     debug: bool
     cookies: CookiesConfig
@@ -36,7 +40,7 @@ class Config(BaseModel):
 
 
 DEFAULT_CONFIG = Config.model_validate({
-    "version": 1,
+    "version": 2,
     "debug": True,
     "cookies": {
         "aes_key": "shiba_is_best&&$@SDU%^%#peropero",
@@ -71,6 +75,13 @@ if not CONFIG_PATH.exists():
 with open(CONFIG_PATH) as f:
     config = Config.model_validate(yaml.safe_load(f))
 
+if config.version < DEFAULT_CONFIG.version:
+    os.rename(CONFIG_PATH, CONFIG_PATH.with_suffix(".bak"))
+    with open(CONFIG_PATH, "w") as f:
+        yaml.dump(DEFAULT_CONFIG.model_dump(), f)
+    print("Config file updated, old config file renamed to config.bak")
+    sys.exit(0)
+
 app = Flask(__name__)  # 初始化
 app.debug = config.debug
 # app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:320421@localhost:3306/sakila"##数据库连接,在终端下载SQLAlchemy后用此命令连接,但有可能会出现mysql认证问题,所以建议再下一个cryptography 包,命令为pip install cryptography
@@ -84,6 +95,7 @@ if app.debug:
 code_map = TTLCache[str, str](
     maxsize=config.greeting.max_sessions,
     ttl=config.greeting.expire_sec)
+
 
 class Student_base_info(db.Model):  # 构造对象
     __tablename__ = "teacher_info"  # 定义是mysql中的哪一个表
@@ -107,9 +119,12 @@ class Teacher_stu_info(db.Model):
 
 def encrypt_cookies(cookies: Cookies) -> str:
     cipher = AES.new(config.cookies.aes_key.encode(), AES.MODE_GCM)
-    encrypted, digest = cipher.encrypt_and_digest(cookies.model_dump_json().encode())
-    data = len(digest).to_bytes(1, "little") + digest + cipher.nonce + encrypted
+    encrypted, digest = cipher.encrypt_and_digest(
+        cookies.model_dump_json().encode())
+    data = len(digest).to_bytes(1, "little") + \
+        digest + cipher.nonce + encrypted
     return b64encode(data).decode()
+
 
 def decrypt_cookies(b64: str) -> Cookies:
     data = b64decode(b64)
@@ -120,6 +135,7 @@ def decrypt_cookies(b64: str) -> Cookies:
     decrypted: bytes = cipher.decrypt_and_verify(data[d_len + 17:], digest)
     cookies = Cookies.model_validate_json(decrypted.decode())
     return cookies
+
 
 def validate_cookies(cookies: str | Cookies) -> bool:
     if isinstance(cookies, str):
@@ -133,13 +149,14 @@ def validate_cookies(cookies: str | Cookies) -> bool:
 
     return teacher_info and cookies.expire > datetime.utcnow()
 
+
 @app.route('/')
 def home():
     cookies = request.cookies.get("cookies")
     if not cookies or not validate_cookies(cookies):
         return redirect("/login")
     return redirect("/new.html")
-    
+
 
 # 显示登录页面，仅允许GET请求
 
@@ -151,7 +168,7 @@ def login():
     b = io.BytesIO()
     image.save(b, "jpeg")
     image_path = f"data:image/jpeg;base64,{b64encode(b.getvalue()).decode()}"
-    res =  make_response(render_template("login.html", image_path=image_path))
+    res = make_response(render_template("login.html", image_path=image_path))
     session_id = str(uuid4())
     res.set_cookie("session_id", session_id, httponly=True)
     code_map[session_id] = captcha_code.lower()
@@ -167,30 +184,31 @@ def login_get():
 
     if not name or not password or not code:
         return jsonify({"success": False, "code": 1, "info": "信息不完整"})
-    
+
     captcha_code = code_map.get(session_id)
     code = code.lower()
 
     if not captcha_code:
         return jsonify({"success": False, "code": 2, "info": "验证码过期"})
 
+    if code != captcha_code:
+        return jsonify({"success": False, "code": 3, "info": "验证码错误"})
+
     teacher_info = Student_base_info.query.filter_by(
         name=name, password=password).first()  # 查询过滤器
 
     logging.debug("Login attempt : name: %s, password: %s", name, password)
+
     if teacher_info:
-        if code == captcha_code:
-            res = jsonify({"success": True, "info": "正确"})  # 封装信息并返回
-            cookies = Cookies(
-                username=name,
-                token=password,
-                expire=datetime.utcnow() + timedelta(seconds=config.cookies.expire_sec))
-            res.set_cookie("cookies", encrypt_cookies(cookies), httponly=True)
-            return res
-        else:
-            return jsonify({"success": False, "code": 3, "info": "验证码错误"})
+        res = jsonify({"success": True, "info": "正确"})  # 封装信息并返回
+        cookies = Cookies(
+            username=name,
+            token=password,
+            expire=datetime.utcnow() + timedelta(seconds=config.cookies.expire_sec))
+        res.set_cookie("cookies", encrypt_cookies(cookies), httponly=True)
+        return res
     else:
-        return jsonify({"success": False, "code": 4, "info": "学生信息错误"})
+        return jsonify({"success": False, "code": 4, "info": "教师信息错误"})
 
 
 @app.route("/register_get", methods=["POST"])
@@ -202,22 +220,24 @@ def register_get():
 
     if not name or not password or not code:
         return jsonify({"success": False, "code": 1, "info": "信息不完整"})
-    
+
     captcha_code = code_map.get(session_id)
     code = code.lower()
 
     if not captcha_code:
         return jsonify({"success": False, "code": 2, "info": "验证码过期"})
 
-    teacher_info = Student_base_info.query.filter_by(name=name).first()
-    if teacher_info:
-        return jsonify({"success": False, "code": 5, "info": "此用户已经存在"})
     if code != captcha_code:
         return jsonify({"success": False, "code": 3, "info": "验证码错误"})
-    else:
-        new_student = Student_base_info(name=name, password=password)
-        db.session.add(new_student)
-        db.session.commit()
+
+    teacher_info = Student_base_info.query.filter_by(name=name).first()
+
+    if teacher_info:
+        return jsonify({"success": False, "code": 5, "info": "此用户已经存在"})
+
+    new_student = Student_base_info(name=name, password=password)
+    db.session.add(new_student)
+    db.session.commit()
     return jsonify({"success": True, "info": "注册成功"})
 
 
@@ -293,9 +313,11 @@ def new_page():
 def redirect_login():
     return redirect("/login")
 
+
 @app.route("/register.html")  # 同样的更新
 def redirect_register():
     return redirect("/register")
+
 
 @app.route("/register")  # 同样的更新
 def register_html():
@@ -304,7 +326,8 @@ def register_html():
     b = io.BytesIO()
     image.save(b, "jpeg")
     image_path = f"data:image/jpeg;base64,{b64encode(b.getvalue()).decode()}"
-    res =  make_response(render_template("register.html", image_path=image_path))
+    res = make_response(render_template(
+        "register.html", image_path=image_path))
     session_id = str(uuid4())
     res.set_cookie("session_id", session_id, httponly=True)
     code_map[session_id] = captcha_code.lower()
@@ -320,8 +343,9 @@ def get_info():
     name = cookies.username
     logging.debug("Get all info : name: %s", name)
     students = Teacher_stu_info.query.filter_by(teachername=name).all()
-    student_list = [{"name": student.studentname, "number": student.studentnumber, "sex": student.studentsex,
-                     "age": student.studentage, "origin": student.studentorigin, "sdept": student.studentsdept} for student in students]  # 用你的实际字段替换
+    student_list = [{"name": s.studentname, "number": s.studentnumber, "sex": s.studentsex,
+                     "age": s.studentage, "origin": s.studentorigin, "sdept": s.studentsdept}
+                    for s in students]  # 用你的实际字段替换
     return jsonify({"students": student_list})  # 以json格式返回
 
 
@@ -352,9 +376,7 @@ def update_student(student_id):
     data = request.get_json()  # 获取json文件
     student = Teacher_stu_info.query.filter_by(
         studentnumber=student_id).first()
-    # print(student_id)
-    # print(data["number"], data["age"], data["address"], data["sdept"])
-    # print(student.studentnumber, student.studentage)
+
     logging.debug("Update student : student_id: %s, data: %s",
                   student_id, data)
     if student:

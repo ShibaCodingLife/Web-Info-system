@@ -1,6 +1,7 @@
 **/tmp
 **/logs
 config.yaml
+config.bak
 .DS_Store
 .vscode
 geckodriver.log

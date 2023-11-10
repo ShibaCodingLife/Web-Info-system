@@ -41,6 +41,7 @@ git clone https://github.com/ShibaCodingLife/web-info-system.git
   - PyYAML
   - pycryptodome
   - Pydantic
+  - cachetools
 - npm
   - argon2-browser
 
