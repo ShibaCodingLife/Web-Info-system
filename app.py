@@ -176,13 +176,17 @@ def register_html():
 @app.route("/students", methods=["GET"])
 @login_required()
 def students():
-    ITEMS_PER_PAGE = 23
+    ITEMS_PER_PAGE = 7
     cookies = request.cookies.get("cookies")
     cookies = decrypt_cookies(cookies)
     page = request.args.get("page", 1, type=int) - 1
     name = cookies.username
     students = Teacher_stu_info.query.filter_by(teachername=name).all()
     total_pages = ceil(len(students) / ITEMS_PER_PAGE)
+
+    if not total_pages:
+        return render_template("students.html", teacher_name=name, students=[],
+                               total_pages=1, this_page=1)
 
     if page < 0 or page >= total_pages:
         return redirect("/students?page=1")
@@ -199,13 +203,17 @@ def students():
 @app.route("/search/<search_input>", methods=["GET"])
 @login_required()
 def search(search_input):
-    ITEMS_PER_PAGE = 23
+    ITEMS_PER_PAGE = 7
     cookies = request.cookies.get("cookies")
     cookies = decrypt_cookies(cookies)
     page = request.args.get("page", 1, type=int) - 1
     name = cookies.username
     students = Teacher_stu_info.query.filter_by(teachername=name).all()
     total_pages = ceil(len(students) / ITEMS_PER_PAGE)
+
+    if not total_pages:
+        return render_template("students.html", teacher_name=name, students=[],
+                               total_pages=1, this_page=1)
 
     if page < 0 or page >= total_pages:
         return redirect(f"/search/{search_input}?page=1")
