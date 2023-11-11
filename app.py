@@ -208,12 +208,18 @@ def search(search_input):
     cookies = decrypt_cookies(cookies)
     page = request.args.get("page", 1, type=int) - 1
     name = cookies.username
-    students = Teacher_stu_info.query.filter_by(teachername=name).all()
+    try:
+        students = search_t_s_info(search_input, name, db, Teacher_stu_info)
+    except ValueError as e:
+        return render_template("students.html", teacher_name=name, students=[],
+                               total_pages=1, this_page=1,
+                               search_input=search_input, error=str(e))
+
     total_pages = ceil(len(students) / ITEMS_PER_PAGE)
 
     if not total_pages:
         return render_template("students.html", teacher_name=name, students=[],
-                               total_pages=1, this_page=1)
+                               total_pages=1, this_page=1, search_input=search_input)
 
     if page < 0 or page >= total_pages:
         return redirect(f"/search/{search_input}?page=1")
@@ -222,13 +228,6 @@ def search(search_input):
     end = start + ITEMS_PER_PAGE if start + \
         ITEMS_PER_PAGE < len(students) else len(students)
     students = students[start:end]
-
-    try:
-        students = search_t_s_info(search_input, name, db, Teacher_stu_info)
-    except ValueError as e:
-        return render_template("students.html", teacher_name=name, students=[],
-                               total_pages=total_pages, this_page=page + 1,
-                               search_input=search_input, error=str(e))
 
     return render_template("students.html", teacher_name=name, students=students,
                            total_pages=total_pages, this_page=page + 1,
