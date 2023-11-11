@@ -14,6 +14,11 @@
 	<body>
 		<header>
 			<h1>Student Information</h1>
+			{% if error %}
+			<div class="error-box">
+				<p>{{ error }}</p>
+			</div>
+			{% endif %}
 			<div class="search-container">
 				<div id="search-wrapper">
 					<input
@@ -40,21 +45,25 @@
 				{% for student in students %}
 				<div class="student-card" data-student-id="{{ student.studentnumber }}">
 					<div class="info">
-						<h2 id="name">{{ student.studentname }}</h2>
-						<p><strong>Student ID:</strong> {{ student.studentnumber }}</p>
-						<p>
+						<h2 id="name" title="field name: name">
+							{{ student.studentname }}
+						</h2>
+						<p title="field name: id">
+							<strong>Student ID:</strong> {{ student.studentnumber }}
+						</p>
+						<p title="field name: age">
 							<strong>Age:</strong>
 							<span id="age">{{ student.studentage }}</span>
 						</p>
-						<p>
+						<p title="field name: sex">
 							<strong>Sex:</strong>
 							<span id="sex">{{ student.studentsex }}</span>
 						</p>
-						<p>
+						<p title="field name: addr | address">
 							<strong>Address:</strong>
 							<span id="address">{{ student.studentorigin }}</span>
 						</p>
-						<p>
+						<p title="field name: dept | department">
 							<strong>Department:</strong>
 							<span id="department">{{ student.studentsdept }}</span>
 						</p>
@@ -96,12 +105,22 @@
 					id="student-card-template"
 				>
 					<div class="info">
-						<h2 id="name"></h2>
-						<p><strong>Student ID:</strong> <span id="student_id"></span></p>
-						<p><strong>Age:</strong> <span id="age"></span></p>
-						<p><strong>Sex:</strong> <span id="sex"></span></p>
-						<p><strong>Address:</strong> <span id="address"></span></p>
-						<p><strong>Department:</strong> <span id="department"></span></p>
+						<h2 id="name" title="field name: name"></h2>
+						<p title="field name: id">
+							<strong>Student ID:</strong> <span id="student_id"></span>
+						</p>
+						<p title="field name: age">
+							<strong>Age:</strong> <span id="age"></span>
+						</p>
+						<p title="field name: sex">
+							<strong>Sex:</strong> <span id="sex"></span>
+						</p>
+						<p title="field name: addr | address">
+							<strong>Address:</strong> <span id="address"></span>
+						</p>
+						<p title="field name: dept | department">
+							<strong>Department:</strong> <span id="department"></span>
+						</p>
 					</div>
 					<div class="editor">
 						<label for="name">Name:</label>
@@ -131,12 +150,16 @@
 				</div>
 			</div>
 		</main>
-
-		<div id="editor-modal" class="modal">
-			<div class="modal-content">
-				<span class="close">&times;</span>
-				<!-- Add your editor form here -->
-			</div>
-		</div>
+		<footer>
+			<nav class="page-footnote">
+				<a href="{{ url_for('students', page=1) }}">&lt;&lt;</a>
+				<a href="{{ url_for('students', page=this_page-1) }}">&lt;</a>
+				{% for page in range(1, total_pages + 1) %}
+				<a href="{{ url_for('students', page=page) }}">{{ page }}</a>
+				{% endfor %}
+				<a href="{{ url_for('students', page=this_page+1) }}">&gt;</a>
+				<a href="{{ url_for('students', page=total_pages) }}">&gt;&gt;</a>
+			</nav>
+		</footer>
 	</body>
 </html>

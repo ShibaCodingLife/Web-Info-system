@@ -1,7 +1,7 @@
 import io
 import logging
 import helpers
-# 需要导入的包体,flask,request不用说,render_template用来渲染定位, jsonify是后端传给前端的数据格式以便前端获取其中的信息来做出判断,redirect重定向
+from math import ceil
 from uuid import uuid4
 from base64 import b64encode
 from cachetools import TTLCache
@@ -10,6 +10,7 @@ from flask import request, render_template, jsonify, redirect, make_response
 from helpers.cookies import login_required, validate_cookies
 from helpers.cookies import decrypt_cookies, encrypt_cookies, Cookies
 from helpers.captcha import generate_random_code, generate_image
+from helpers.search import search_t_s_info
 
 config, app, db, Student_base_info, Teacher_stu_info = helpers.init()
 
@@ -175,17 +176,55 @@ def register_html():
 @app.route("/students", methods=["GET"])
 @login_required()
 def students():
+    ITEMS_PER_PAGE = 23
     cookies = request.cookies.get("cookies")
     cookies = decrypt_cookies(cookies)
+    page = request.args.get("page", 1, type=int) - 1
     name = cookies.username
     students = Teacher_stu_info.query.filter_by(teachername=name).all()
-    return render_template("students.html", teacher_name=name, students=students)
+    total_pages = ceil(len(students) / ITEMS_PER_PAGE)
+
+    if page < 0 or page >= total_pages:
+        return redirect("/students?page=1")
+
+    start = page * ITEMS_PER_PAGE
+    end = start + ITEMS_PER_PAGE if start + \
+        ITEMS_PER_PAGE < len(students) else len(students)
+    students = students[start:end]
+
+    return render_template("students.html", teacher_name=name, students=students,
+                           total_pages=total_pages, this_page=page + 1)
 
 
-@app.route("/search/<search_input>", methods=["POST"])
+@app.route("/search/<search_input>", methods=["GET"])
 @login_required()
 def search(search_input):
-    raise NotImplementedError
+    ITEMS_PER_PAGE = 23
+    cookies = request.cookies.get("cookies")
+    cookies = decrypt_cookies(cookies)
+    page = request.args.get("page", 1, type=int) - 1
+    name = cookies.username
+    students = Teacher_stu_info.query.filter_by(teachername=name).all()
+    total_pages = ceil(len(students) / ITEMS_PER_PAGE)
+
+    if page < 0 or page >= total_pages:
+        return redirect(f"/search/{search_input}?page=1")
+
+    start = page * ITEMS_PER_PAGE
+    end = start + ITEMS_PER_PAGE if start + \
+        ITEMS_PER_PAGE < len(students) else len(students)
+    students = students[start:end]
+
+    try:
+        students = search_t_s_info(search_input, name, db, Teacher_stu_info)
+    except ValueError as e:
+        return render_template("students.html", teacher_name=name, students=[],
+                               total_pages=total_pages, this_page=page + 1,
+                               search_input=search_input, error=str(e))
+
+    return render_template("students.html", teacher_name=name, students=students,
+                           total_pages=total_pages, this_page=page + 1,
+                           search_input=search_input)
 
 
 @app.route("/all_get", methods=["POST"])  # 前端点击获取所有关于老师学生信息并渲染至表格中

@@ -114,6 +114,10 @@ $(document).ready(function () {
 			return;
 		}
 		let search_text = $("#search-input").val();
+		if (search_text === "") {
+			window.location.href = "/students";
+			return;
+		}
 		window.location.href = "/search/" + search_text;
 	});
 

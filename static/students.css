@@ -20,6 +20,17 @@ header h1 {
 	transition: font-size 0.3s;
 }
 
+.error-box {
+	margin: 0 auto;
+	overflow: auto;
+	padding: 5px 15px;
+	background-color: #ff6b6b;
+	color: #fff;
+	border-radius: 10px;
+	text-align: center;
+	max-width: 400px;
+}
+
 .user-info {
 	position: absolute;
 	bottom: 20px;
@@ -58,6 +69,53 @@ header h1 {
 .dropdown.show-dropdown .dropdown-content {
 	opacity: 1;
 	transform: translateY(0);
+}
+
+.search-container {
+	margin-left: 20px;
+	display: flex;
+	align-items: center;
+}
+
+#search-input {
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	margin-right: 5px;
+	font-size: 14px;
+	transition: border 0.3s;
+}
+
+#search-wrapper {
+	overflow: hidden;
+	width: 0;
+	opacity: 0;
+	transition: width 0.3s ease, opacity 0.3s ease;
+}
+
+#search-wrapper.active {
+	width: 200px;
+	opacity: 1;
+}
+
+#search-input:focus {
+	outline: none;
+	border: 1px solid #3498db;
+}
+
+#search-btn {
+	padding: 10px 15px;
+	cursor: pointer;
+	background-color: #3498db;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	font-size: 14px;
+	transition: background-color 0.3s;
+}
+
+#search-btn:hover {
+	background-color: #2980b9;
 }
 
 main {
@@ -136,49 +194,24 @@ main {
 	margin: 40px auto;
 }
 
-.search-container {
-	margin-left: 20px;
-	display: flex;
-	align-items: center;
-}
-
-#search-input {
+footer {
+	background-color: #f2f2f2;
 	padding: 10px;
-	border: 1px solid #ddd;
-	border-radius: 5px;
-	margin-right: 5px;
+	text-align: center;
+}
+
+.page-footnote {
+	display: flex;
+	justify-content: center;
+}
+
+.page-footnote a {
+	text-decoration: none;
+	color: #1a0dab;
+	margin: 0 5px;
 	font-size: 14px;
-	transition: border 0.3s;
 }
 
-#search-wrapper {
-	overflow: hidden;
-	width: 0;
-	opacity: 0;
-	transition: width 0.3s ease, opacity 0.3s ease;
-}
-
-#search-wrapper.active {
-	width: 200px;
-	opacity: 1;
-}
-
-#search-input:focus {
-	outline: none;
-	border: 1px solid #3498db;
-}
-
-#search-btn {
-	padding: 10px 15px;
-	cursor: pointer;
-	background-color: #3498db;
-	color: white;
-	border: none;
-	border-radius: 5px;
-	font-size: 14px;
-	transition: background-color 0.3s;
-}
-
-#search-btn:hover {
-	background-color: #2980b9;
+.page-footnote a:hover {
+	text-decoration: underline;
 }

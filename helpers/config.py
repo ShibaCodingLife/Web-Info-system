@@ -23,7 +23,7 @@ class Config(BaseModel):
         max_sessions: int = 2048
         expire_sec: int = 300
 
-    class ExperiementalConfig(BaseModel):
+    class ExperimentalConfig(BaseModel):
         replace_new_with_students: bool = False
 
     version: int = 3
@@ -32,7 +32,7 @@ class Config(BaseModel):
     greeting: GreetingConfig = Field(default_factory=GreetingConfig)
     logging: dict = Field(default_factory=dict)
     db: DBConfig = Field(default_factory=DBConfig)
-    experimental: ExperiementalConfig = Field(default_factory=ExperiementalConfig)
+    experimental: ExperimentalConfig = Field(default_factory=ExperimentalConfig)
 
 
 DEFAULT_CONFIG = Config()

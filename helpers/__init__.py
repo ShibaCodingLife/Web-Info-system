@@ -2,8 +2,9 @@ from . import config
 from . import cookies
 from . import database
 from . import captcha
+from . import search
 
-__ALL__ = ("config", "cookies", "database", "captcha", "init")
+__ALL__ = ("config", "cookies", "database", "captcha", "search", "init")
 
 
 def init():
