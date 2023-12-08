@@ -1,167 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Student Information</title>
-		<link
-			rel="stylesheet"
-			href="{{ url_for('static', filename='students.css') }}"
-		/>
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<script src="{{ url_for('static', filename='students.js') }}"></script>
-	</head>
-	<body>
-		<header>
-			<h1>Student Information</h1>
-			{% if error %}
-			<div class="error-box">
-				<p>{{ error }}</p>
-			</div>
-			{% endif %}
-			<div class="search-container">
-				<div id="search-wrapper">
-					<input
-						type="text"
-						id="search-input"
-						placeholder="Search..."
-						value="{{ search_input }}"
-					/>
-				</div>
-				<button id="search-btn">Search</button>
-			</div>
-			<div class="user-info">
-				<div class="dropdown">
-					<div class="teacher-name" id="teacherName">{{ teacher_name }}</div>
-					<div class="dropdown-content">
-						<div id="logout-btn">logout</div>
-					</div>
-				</div>
-			</div>
-		</header>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Student Information</title>
+    <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='students.css') }}"
+            type="text/css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='students.js') }}"></script>
+</head>
+<body>
+<header>
+    <h1>Student Information</h1>
+    {% if error %}
+    <div class="error-box">
+        <p>{{ error }}</p>
+    </div>
+    {% endif %}
+    <div class="search-container">
+        <div id="search-wrapper">
+            <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search..."
+                    value="{{ search_input }}"
+            />
+        </div>
+        <button id="search-btn">Search</button>
+    </div>
+    <div class="user-info">
+        <div class="dropdown">
+            <div class="teacher-name" id="teacherName">{{ teacher_name }}</div>
+            <div class="dropdown-content">
+                <div id="logout-btn">logout</div>
+            </div>
+        </div>
+    </div>
+</header>
 
-		<main>
-			<div class="students-container">
-				{% for student in students %}
-				<div class="student-card" data-student-id="{{ student.studentnumber }}">
-					<div class="info">
-						<h2 id="name" title="field name: name">
-							{{ student.studentname }}
-						</h2>
-						<p title="field name: id">
-							<strong>Student ID:</strong> {{ student.studentnumber }}
-						</p>
-						<p title="field name: age">
-							<strong>Age:</strong>
-							<span id="age">{{ student.studentage }}</span>
-						</p>
-						<p title="field name: sex">
-							<strong>Sex:</strong>
-							<span id="sex">{{ student.studentsex }}</span>
-						</p>
-						<p title="field name: addr | address">
-							<strong>Address:</strong>
-							<span id="address">{{ student.studentorigin }}</span>
-						</p>
-						<p title="field name: dept | department">
-							<strong>Department:</strong>
-							<span id="department">{{ student.studentsdept }}</span>
-						</p>
-					</div>
-					<div class="editor">
-						<label for="name">Name:</label>
-						<input type="text" id="name" value="{{ student.studentname }}" />
-						<label for="student_id">Student ID:</label>
-						<input
-							type="text"
-							id="student_id"
-							value="{{ student.studentnumber }}"
-						/>
-						<label for="age">Age:</label>
-						<input type="text" id="age" value="{{ student.studentage }}" />
-						<label for="sex">Sex:</label>
-						<input type="text" id="sex" value="{{ student.studentsex }}" />
-						<label for="address">Address:</label>
-						<input
-							type="text"
-							id="address"
-							value="{{ student.studentorigin }}"
-						/>
-						<label for="department">Department:</label>
-						<input
-							type="text"
-							id="department"
-							value="{{ student.studentsdept }}"
-						/>
-						<div class="editor-btn-container">
-							<button class="editor-btn save-btn">save</button>
-							<button class="editor-btn delete-btn">delete</button>
-							<button class="editor-btn cancel-btn">cancel</button>
-						</div>
-					</div>
-				</div>
-				{% endfor %}
-				<div
-					class="student-card new-student-card"
-					data-student-id="-1"
-					id="student-card-template"
-				>
-					<div class="info">
-						<h2 id="name" title="field name: name"></h2>
-						<p title="field name: id">
-							<strong>Student ID:</strong> <span id="student_id"></span>
-						</p>
-						<p title="field name: age">
-							<strong>Age:</strong> <span id="age"></span>
-						</p>
-						<p title="field name: sex">
-							<strong>Sex:</strong> <span id="sex"></span>
-						</p>
-						<p title="field name: addr | address">
-							<strong>Address:</strong> <span id="address"></span>
-						</p>
-						<p title="field name: dept | department">
-							<strong>Department:</strong> <span id="department"></span>
-						</p>
-					</div>
-					<div class="editor">
-						<label for="name">Name:</label>
-						<input type="text" id="name" value="" />
-						<label for="student_id">Student ID:</label>
-						<input type="text" id="student_id" value="" />
-						<label for="age">Age:</label>
-						<input type="text" id="age" value="" />
-						<label for="sex">Sex:</label>
-						<input type="text" id="sex" value="" />
-						<label for="address">Address:</label>
-						<input type="text" id="address" value="" />
-						<label for="department">Department:</label>
-						<input type="text" id="department" value="" />
-						<button class="editor-btn save-btn">save</button>
-						<button class="editor-btn delete-btn">delete</button>
-						<button class="editor-btn cancel-btn">cancel</button>
-					</div>
-				</div>
-				<div class="student-card">
-					<h2>Add Student</h2>
-					<img
-						class="add-btn"
-						src="{{ url_for('static', filename='add-button.svg') }}"
-						alt="add"
-					/>
-				</div>
-			</div>
-		</main>
-		<footer>
-			<nav class="page-footnote">
-				<a href="{{ url_for('students', page=1) }}">&lt;&lt;</a>
-				<a href="{{ url_for('students', page=this_page-1) }}">&lt;</a>
-				{% for page in range(1, total_pages + 1) %}
-				<a href="{{ url_for('students', page=page) }}">{{ page }}</a>
-				{% endfor %}
-				<a href="{{ url_for('students', page=this_page+1) }}">&gt;</a>
-				<a href="{{ url_for('students', page=total_pages) }}">&gt;&gt;</a>
-			</nav>
-		</footer>
-	</body>
+<main>
+    <div class="students-container">
+        {% for student in students %}
+        <div class="student-card" data-student-id="{{ student.studentnumber }}">
+            <div class="info">
+                <h2 id="name" title="field name: name">
+                    {{ student.studentname }}
+                </h2>
+                <table>
+                    <tbody>
+                    <tr>
+                        <th>学号</th>
+                        <td>{{ student.studentnumber }}</td>
+                    </tr>
+                    <tr>
+                        <th>年龄</th>
+                        <td>{{ student.studentage }}</td>
+                    </tr>
+                    <tr>
+                        <th>性别</th>
+                        <td>{{ student.studentsex }}</td>
+                    </tr>
+                    <tr>
+                        <th>籍贯</th>
+                        <td>{{ student.studentorigin }}</td>
+                    </tr>
+                    <tr>
+                        <th>专业</th>
+                        <td>{{ student.studentsdept }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="editor">
+                <label for="name">Name:</label>
+                <input type="text" id="name" value="{{ student.studentname }}"/>
+                <label for="student_id">Student ID:</label>
+                <input
+                        type="text"
+                        id="student_id"
+                        value="{{ student.studentnumber }}"
+                />
+                <label for="age">Age:</label>
+                <input type="text" id="age" value="{{ student.studentage }}"/>
+                <label for="sex">Sex:</label>
+                <input type="text" id="sex" value="{{ student.studentsex }}"/>
+                <label for="address">Address:</label>
+                <input
+                        type="text"
+                        id="address"
+                        value="{{ student.studentorigin }}"
+                />
+                <label for="department">Department:</label>
+                <input
+                        type="text"
+                        id="department"
+                        value="{{ student.studentsdept }}"
+                />
+                <div class="editor-btn-container">
+                    <button class="editor-btn save-btn">save</button>
+                    <button class="editor-btn delete-btn">delete</button>
+                    <button class="editor-btn cancel-btn">cancel</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div
+                class="student-card new-student-card"
+                data-student-id="-1"
+                id="student-card-template"
+        >
+            <div class="info">
+                <h2 id="name" title="field name: name"></h2>
+                <p title="field name: id">
+                    <strong>Student ID:</strong> <span id="student_id"></span>
+                </p>
+                <p title="field name: age">
+                    <strong>Age:</strong> <span id="age"></span>
+                </p>
+                <p title="field name: sex">
+                    <strong>Sex:</strong> <span id="sex"></span>
+                </p>
+                <p title="field name: addr | address">
+                    <strong>Address:</strong> <span id="address"></span>
+                </p>
+                <p title="field name: dept | department">
+                    <strong>Department:</strong> <span id="department"></span>
+                </p>
+            </div>
+            <div class="editor">
+                <label for="name">Name:</label>
+                <input type="text" id="name" value=""/>
+                <label for="student_id">Student ID:</label>
+                <input type="text" id="student_id" value=""/>
+                <label for="age">Age:</label>
+                <input type="text" id="age" value=""/>
+                <label for="sex">Sex:</label>
+                <input type="text" id="sex" value=""/>
+                <label for="address">Address:</label>
+                <input type="text" id="address" value=""/>
+                <label for="department">Department:</label>
+                <input type="text" id="department" value=""/>
+                <button class="editor-btn save-btn">save</button>
+                <button class="editor-btn delete-btn">delete</button>
+                <button class="editor-btn cancel-btn">cancel</button>
+            </div>
+        </div>
+        <div class="student-card">
+            <h2>Add Student</h2>
+            <img
+                    class="add-btn"
+                    src="{{ url_for('static', filename='add-button.svg') }}"
+                    alt="add"
+            />
+        </div>
+    </div>
+</main>
+<footer>
+    <nav class="page-footnote">
+        <a href="{{ url_for('students', page=1) }}">&lt;&lt;</a>
+        <a href="{{ url_for('students', page=this_page-1) }}">&lt;</a>
+        {% for page in range(1, total_pages + 1) %}
+        <a href="{{ url_for('students', page=page) }}">{{ page }}</a>
+        {% endfor %}
+        <a href="{{ url_for('students', page=this_page+1) }}">&gt;</a>
+        <a href="{{ url_for('students', page=total_pages) }}">&gt;&gt;</a>
+    </nav>
+</footer>
+</body>
 </html>

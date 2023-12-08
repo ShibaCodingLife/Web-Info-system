@@ -5,7 +5,7 @@ __ALL__ = ("generate_random_code", "generate_image")
 
 
 def generate_random_code(length=4):
-    characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    characters = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghjkmnopqrstuvwxyz0123456789"
     code = ''.join(random.choice(characters) for _ in range(length))
     return code
 

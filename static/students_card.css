@@ -1,0 +1,125 @@
+.student-card {
+    background: linear-gradient(to right, #ffffff 0%, #fefefe 50%, #f7f7f7 100%);
+    border: 1px solid #e0e0e3;
+    border-radius: 11px;
+    padding: 30px;
+    margin: 20px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    width: 200px;
+}
+
+.student-card:hover {
+    transform: scale(1.05); /* Expand a little on hover */
+}
+
+.student-card h2 {
+    color: #000000;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+
+.new-student-card {
+    display: none;
+}
+
+.students-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.info {
+    display: block;
+}
+
+.editor {
+    display: none;
+}
+
+.editor label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.editor input {
+    width: calc(100% - 10px);
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.editor-btn-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
+.editor-btn {
+    background-color: #3498db;
+    color: #fff;
+    padding: 6px 10px;
+    margin: 6px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.add-btn {
+    display: block;
+    max-height: 128px;
+    margin: 40px auto;
+}
+
+/*===========================表格样式=============================*/
+
+table {
+    border-spacing: inherit;
+    width: 100%;
+    border: none;
+}
+
+td, th {
+    padding: 10px;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+}
+
+td:hover{
+    background-color: #f5f5f5;
+}
+
+th {
+    color: #414141;
+    width: 36px;
+    text-align: center;
+    font-weight: 300;
+}
+
+td {
+    color: #171717;
+    font-weight: 400;
+    text-align: left;
+    border-right: 1px solid #ccc;
+}
+
+tbody tr:first-child th {
+    border-top-left-radius: 5px;
+}
+
+tbody tr:first-child td {
+    border-top-right-radius: 5px;
+}
+
+tbody tr:last-child th {
+    border-bottom-left-radius: 6px;
+    border-bottom: 1px solid #ccc;
+}
+
+tbody tr:last-child td {
+    border-bottom-right-radius: 6px;
+    border-bottom: 1px solid #ccc;
+}

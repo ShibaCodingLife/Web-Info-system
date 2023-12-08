@@ -26,9 +26,9 @@ def home():
     cookies = request.cookies.get("cookies")
     if not cookies or not validate_cookies(cookies):
         return redirect("/login")
-    if config.experimental.replace_new_with_students:
-        return redirect("/students")
-    return redirect("/new.html")
+    # if config.experimental.replace_new_with_students:
+    return redirect("/students")
+    # return redirect("/new.html")
 
 
 @app.route("/login", methods=["GET"])
@@ -58,6 +58,8 @@ def login_get():
     password = request.form.get("password")
     code = request.form.get("code")
     session_id = request.cookies.get("session_id")
+
+    print(repr(password))
 
     if not session_id:
         return redirect("/login")
@@ -193,7 +195,7 @@ def students():
 
     start = page * ITEMS_PER_PAGE
     end = start + ITEMS_PER_PAGE if start + \
-        ITEMS_PER_PAGE < len(students) else len(students)
+                                    ITEMS_PER_PAGE < len(students) else len(students)
     students = students[start:end]
 
     return render_template("students.html", teacher_name=name, students=students,
@@ -226,7 +228,7 @@ def search(search_input):
 
     start = page * ITEMS_PER_PAGE
     end = start + ITEMS_PER_PAGE if start + \
-        ITEMS_PER_PAGE < len(students) else len(students)
+                                    ITEMS_PER_PAGE < len(students) else len(students)
     students = students[start:end]
 
     return render_template("students.html", teacher_name=name, students=students,
