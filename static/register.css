@@ -139,20 +139,20 @@ input::placeholder {
     transform: scale(1.1);
 }
 
-#dd2{
+#register-btn{
     background-color: #0067b8;
 }
 
-#dd2:hover{
+#register-btn:hover{
     background-color: #014d88;
 }
 
-#dd{
+#back-btn{
     color: #000;
     background: #b2b2b2;
 }
 
-#dd:hover {
+#back-btn:hover {
     background: #949494;
 }
 

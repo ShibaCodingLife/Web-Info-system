@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!--suppress HtmlUnknownTarget -->
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
@@ -62,75 +63,70 @@
         </div>
 
         <div class="btn-group">
-            <button id="dd" class="custom-button" onclick="return1()">
+            <button id="back-btn" class="custom-button" onclick="return1()">
                 <span>返回</span>
             </button>
-            <button id="dd2" class="custom-button">
+            <button id="register-btn" class="custom-button">
                 <span>注册</span>
             </button>
 
         </div>
-        <!--        -->
-        <!--        <button-->
-        <!--                id="dd"-->
-        <!--                style="margin-left: 130px; margin-top: 50px"-->
-        <!--                onclick="return1()"-->
-        <!--        >-->
-        <!--            <span>返回登录</span>-->
-        <!--        </button>-->
-
-        <!--        <button-->
-        <!--                id="dd2"-->
-        <!--                style="position: absolute; margin-left: 100px; margin-top: 50px"-->
-        <!--        >-->
-        <!--            <span>注册</span>-->
-        <!--        </button>-->
     </div>
 </div>
 <script>
-    $(document).ready(function () {
-        $("#dd2").on("click", function (e) {
-            let name = $("#name").val();
-            let password = $("#pass").val();
-            let password2 = $("#pass2").val();
-            let code = $("#code").val();
-            if (!name || !password || !code) {
-                alert("您的信息没有填写完整,请填写完整后登录!");
-                return;
-            }
-            let unsafePattern = /['"%;)/\\]/;
-            if (unsafePattern.test(name) || unsafePattern.test(password)) {
-                alert("输入包含不安全字符，请重新输入!");
-                return;
-            }
-            if (password != password2) {
-                alert("两次密码输入不一致,请确认密码!");
-                return;
-            }
-            if (name && password) {
-                argon2
-                    .hash({pass: password, salt: "SIMS_NaCl"})
-                    .then((res) => {
-                        $.post(
-                            "/register_get",
-                            {name: name, password: res.hashHex, code: code},
-                            function (data) {
-                                if (data.success) {
-                                    alert("您的信息已成功注册!");
-                                    window.location.href = "/login";
-                                } else {
-                                    alert(data.info);
-                                }
-                            }
-                        );
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                        alert(err);
-                    });
-            }
-        });
+    $(function () {
+        console.log("register-btn ////");
+        $("#register-btn").on("click", registerUser);
     });
+
+    $(function () {
+        console.log("enter ////");
+        $("#name, #pass, #pass2, #code").on("keydown", registerUser);
+    });
+
+    function registerUser() {
+        console.log('registerUser');
+        let name = $("#name").val();
+        let password = $("#pass").val();
+        let password2 = $("#pass2").val();
+        let code = $("#code").val();
+        if (!name || !password || !code) {
+            alert("您的信息没有填写完整,请填写完整后登录!");
+            return;
+        }
+        let unsafePattern = /['"%;)/\\]/;
+        if (unsafePattern.test(name) || unsafePattern.test(password)) {
+            alert("输入包含不安全字符，请重新输入!");
+            return;
+        }
+        if (password !== password2) {
+            alert("两次密码输入不一致,请确认密码!");
+            return;
+        }
+        if (name && password) {
+            argon2
+                .hash({pass: password, salt: "SIMS_NaCl"})
+                .then((res) => {
+                    $.post(
+                        "/register_get",
+                        {name: name, password: res.hashHex, code: code},
+                        function (data) {
+                            if (data.success) {
+                                alert("您的信息已成功注册!");
+                                window.location.href = "/login";
+                            } else {
+                                alert(data.info);
+                            }
+                        }
+                    );
+                })
+                .catch((err) => {
+                    console.log(err);
+                    alert(err);
+                });
+        }
+    }
+
 
     function return1() {
         window.location.href = "/login.html";
@@ -141,7 +137,6 @@
         fetch("/change_captcha")
             .then((response) => response.json())
             .then((data) => {
-                const randomParameter = Math.random();
                 document.querySelector("#captchaImage").src = data.image_path;
             })
             .catch((err) => {

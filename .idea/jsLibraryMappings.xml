@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="PROJECT" libraries="{argon2-browser, jQuery, jquery-3.6.0}" />
+    <includedPredefinedLibrary name="HTTP Pre-Request and Response Handler" />
+  </component>
+</project>

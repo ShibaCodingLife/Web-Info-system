@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="argon2-browser" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/static/node_modules/argon2-browser" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/static/node_modules/argon2-browser" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
