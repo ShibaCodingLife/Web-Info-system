@@ -1,7 +1,16 @@
 @import url("students_card.css");
 
+@font-face {
+    font-family: 'CustomFont';
+    src: url('fonts/SF-Pro.ttf') format('truetype'),
+    url('fonts/SF-Pro-Italic.ttf') format('truetype');
+}
+
+* {
+    font-family: CustomFont, Helvetica Neue, Helvetica, sans-serif;
+}
+
 body {
-    font-family: SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #ffffff;
