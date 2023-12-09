@@ -10,6 +10,7 @@ geckodriver.log
 node_modules
 captcha.png
 
+.idea
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
