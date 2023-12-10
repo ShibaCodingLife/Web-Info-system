@@ -10,7 +10,15 @@
     font-family: CustomFont, Helvetica Neue, Helvetica, sans-serif;
 }
 
+main{
+    background-image: url('./bg.svg');
+    flex-grow: 1; /* main 元素会拉伸以填充剩余的空间 */
+}
+
 body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* 设置 body 的最小高度为视窗的高度，保证至少撑满一屏 */
     margin: 0;
     padding: 0;
     background-color: #ffffff;
@@ -82,9 +90,13 @@ h1 {
     background-color: #2980b9;
 }
 
-.dropdown.show-dropdown .dropdown-content {
+.dropdown-content {
     opacity: 1;
     transform: translateY(0);
+}
+
+.hidden{
+    display: none;
 }
 
 .search-container {

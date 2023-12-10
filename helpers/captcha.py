@@ -15,7 +15,7 @@ def generate_image(code):
     draw = ImageDraw.Draw(image)
 
     # 使用艺术字体
-    with open("static/arial.ttf", "rb") as f:
+    with open("static/fonts/arial.ttf", "rb") as f:
         # Well shit, I don't have arial.ttf on local OS
         font = ImageFont.truetype(f, 40)
 

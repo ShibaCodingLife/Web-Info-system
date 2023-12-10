@@ -89,9 +89,6 @@ $(document).ready(function () {
     $(".add-btn").click(function (event) {
         event.stopPropagation();
         let student_card_template = $("#student-card-template");
-        // new_student_card = student_card_template.clone(
-        //     (deepWithDataAndEvents = true)
-        // );
         let new_student_card = student_card_template.clone(true);
         new_student_card.removeAttr("id");
         new_student_card.css("display", "flex");
@@ -101,9 +98,11 @@ $(document).ready(function () {
     $("#teacherName").click(function (event) {
         event.stopPropagation();
         $(".dropdown").toggleClass("show-dropdown");
+        $(".dropdown-content").toggleClass("hidden");
+        // $(this).siblings(".dropdown-content").toggleClass("show-dropdown");
     });
 
-    $("#logout-btn").click(function (event) {
+    $(".dropdown-content").click(function (event) {
         event.stopPropagation();
         window.location.href = "/logout";
     });

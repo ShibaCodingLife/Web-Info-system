@@ -54,17 +54,20 @@ def logout():
 
 @app.route("/login_get", methods=["POST"])  # 允许处理前端的post请求
 def login_get():
-    name = request.form.get("name")
-    password = request.form.get("password")
-    code = request.form.get("code")
-    session_id = request.cookies.get("session_id")
+    form_data = request.form
+    cookies_data = request.cookies
+
+    name = form_data.get("name", "")
+    password = form_data.get("password", "")
+    code = form_data.get("code", "")
+    session_id = cookies_data.get("session_id", "")
 
     print(repr(password))
 
     if not session_id:
         return redirect("/login")
 
-    if not name or not password or not code:
+    if not all([name, password, code]):
         return jsonify({"success": False, "code": 1, "info": "信息不完整"})
 
     captcha_code = code_map.get(session_id)
@@ -76,22 +79,21 @@ def login_get():
     if code != captcha_code:
         return jsonify({"success": False, "code": 3, "info": "验证码错误"})
 
-    teacher_info = Student_base_info.query.filter_by(
-        name=name, password=password).first()  # 查询过滤器
+    teacher_info = Student_base_info.query.filter_by(name=name, password=password).first()
 
-    logging.debug("Login attempt : name: %s, password: %s", name, password)
+    logging.debug("Login attempt: name: %s, password: %s", name, password)
 
     if teacher_info:
-        res = jsonify({"success": True, "info": "正确"})  # 封装信息并返回
-        cookies = Cookies(
+        response = jsonify({"success": True, "info": "正确"})
+        session_cookies = Cookies(
             username=name,
             token=password,
-            expire=datetime.utcnow() + timedelta(seconds=config.cookies.expire_sec))
-        res.set_cookie("cookies", encrypt_cookies(cookies), httponly=True)
-        return res
+            expire=datetime.utcnow() + timedelta(seconds=config.cookies.expire_sec)
+        )
+        response.set_cookie("cookies", encrypt_cookies(session_cookies), httponly=True)
+        return response
     else:
         return jsonify({"success": False, "code": 4, "info": "教师信息错误"})
-
 
 @app.route("/register_get", methods=["POST"])
 def register_get():

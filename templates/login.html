@@ -1,55 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="UTF-8" />
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Student Info Management System</title>
-    <link
-            href="{{ url_for('static', filename='login.css') }}"
-            rel="stylesheet"
-            type="text/css"
-    />
+    <link href="{{ url_for('static', filename='login.css') }}" rel="stylesheet" type="text/css" />
     <script src="{{ url_for('static', filename='node_modules/argon2-browser/dist/argon2-bundled.min.js') }}"></script>
 </head>
+
 <body>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js">
-    //导入Jquery模块以便前端识别JS$相应函数
-</script>
-<div class="main">
-    <h1 class="text">学生信息管理系统</h1>
-    <div class="mainframe">
-        <img alt="山大logo" class="logo" src="{{ url_for('static', filename='logo.png') }}">
-        <hr>
-        <p class="loginword">
-            用户登录
-        </p>
-        <label for="name"></label><input class="user" id="name" placeholder="用户名" type="text"/>
-        <label for="pass"></label><input class="pwd" id="pass" placeholder="密码" type="password"/>
-        <div class="captcha-area">
-            <label for="code"></label><input id="code" placeholder="验证码" type="text"/>
-            <div class="captcha-container-wrapper">
-                <div id="captchaContainer" onclick="changeCaptcha()">
-                    <img alt="captcha" id="captchaImage" src="{{ image_path }}"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js">
+        //导入Jquery模块以便前端识别JS$相应函数
+    </script>
+    <div class="main">
+        <h1 class="text">学生信息管理系统</h1>
+        <div class="mainframe">
+            <img alt="山大logo" class="logo" src="{{ url_for('static', filename='logo.png') }}">
+            <hr>
+            <p class="loginword">
+                用户登录
+            </p>
+            <label for="name"></label><input class="user" id="name" placeholder="用户名" type="text" />
+            <label for="pass"></label><input class="pwd" id="pass" placeholder="密码" type="password" />
+            <div class="captcha-area">
+                <label for="code"></label><input id="code" placeholder="验证码" type="text" />
+                <div class="captcha-container-wrapper">
+                    <div id="captchaContainer" onclick="changeCaptcha()">
+                        <img alt="captcha" id="captchaImage" src="{{ image_path }}" />
+                    </div>
                 </div>
             </div>
+            <div class="btn-group">
+                <button id="dd2" class="custom-button" onclick="register()">
+                    <span>注册</span>
+                </button>
+                <button id="dd" class="custom-button">
+                    <span>登录</span>
+                </button>
+            </div>
         </div>
-        <div class="btn-group">
-            <button id="dd2" class="custom-button" onclick="register()">
-                <span>注册</span>
-            </button>
-            <button id="dd" class="custom-button">
-                <span>登录</span>
-            </button>
-        </div>
-    </div>
-    <script>
-        //我们项目的相应函数基本用下面的$就可以,不需要在用什么form里的请求,将组件和函数分开写,逻辑也清晰
-        $(document).ready(function () {
-            // 当文档加载完成后执行以下代码
-
-            // 监听按钮点击事件
-            $("#dd").on("click", function (_) {
+        <script>
+            function handleLogin() {
                 // 获取输入框的值
                 let name = $("#name").val();
                 let password = $("#pass").val();
@@ -60,7 +53,6 @@
                     alert("您的信息没有填写完整,请填写完整后登录!");
                     return;
                 }
-
                 // 检查输入是否包含不安全字符
                 let unsafePattern = /['"%;)/\\]/;
                 if (unsafePattern.test(name) || unsafePattern.test(password)) {
@@ -72,12 +64,12 @@
                 // 检查用户名和密码是否存在
                 if (name && password) {
                     // 使用argon2库对密码进行哈希处理
-                    argon2.hash({pass: password, salt: "SIMS_NaCl"})
+                    argon2.hash({ pass: password, salt: "SIMS_NaCl" })
                         .then((res) => {
                             // 将用户名、密码哈希值和其他代码发送到后端进行登录验证
                             $.post(
                                 "/login_get",
-                                {name: name, password: res.hashHex, code: code},
+                                { name: name, password: res.hashHex, code: code },
                                 function (data) {
                                     // 处理后端返回的数据
                                     if (data.success) {
@@ -95,26 +87,39 @@
                             alert(err);
                         });
                 }
-            });
-        });
+            }
 
-        function changeCaptcha() {
-            // 向后端请求新的验证码图像
-            fetch("/change_captcha")
-                .then((response) => response.json())
-                .then((data) => {
-                    const randomParameter = Math.random(); //这一块,旨在更新image的路径防止浏览器缓存使得图片不更新,只要能让路径实时变化就行
-                    document.querySelector("#captchaImage").src = data.image_path;
-                })
-                .catch((err) => {
-                    console.log(err);
+            function changeCaptcha() {
+                // 向后端请求新的验证码图像
+                fetch("/change_captcha")
+                    .then((response) => response.json())
+                    .then((data) => {
+                        const randomParameter = Math.random(); //这一块,旨在更新image的路径防止浏览器缓存使得图片不更新,只要能让路径实时变化就行
+                        document.querySelector("#captchaImage").src = data.image_path;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            }
+
+            function register() {
+                window.location.href = "/register";
+            }
+
+            $(document).ready(function () {
+                // 当文档加载完成后执行以下代码
+                // 监听按钮点击事件
+                $("#dd").on("click", handleLogin);
+                // 监听输入框的按键事件
+                $("#name, #pass, #code").keyup(function (event) {
+                    // 检查按下的键是否为 Enter 键
+                    if (event.keyCode === 13) {
+                        handleLogin();
+                    }
                 });
-        }
+            });
 
-        function register() {
-            window.location.href = "/register";
-        }
-    </script>
-</div>
+        </script>
+    </div>
 </body>
 </html>

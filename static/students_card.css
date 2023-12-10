@@ -1,4 +1,11 @@
+:root {
+    --save-btn-color: #057a20;
+    --delete-btn-color: rgb(208, 26, 26);
+    --cancel-btn-color: #0071e3;
+  }
+
 .student-card {
+    height: 268px;
     background: linear-gradient(to right, #ffffff 0%, #fefefe 50%, #f7f7f7 100%);
     border: 1px solid #e0e0e3;
     border-radius: 11px;
@@ -14,6 +21,10 @@
 
 .student-card:hover {
     transform: scale(1.05); /* Expand a little on hover */
+}
+
+.student-card.expanded{
+    height: 405px;
 }
 
 .student-card h2 {
@@ -47,10 +58,20 @@
     margin-bottom: 5px;
 }
 
+.editor .editor-lable{
+    font-size: 16px;
+    font-weight: 600;
+}
+
 .editor input {
     width: calc(100% - 10px);
     margin-bottom: 10px;
-    padding: 5px;
+    padding: 3px;
+}
+
+.editor input:focus{
+    border-width: 2px;
+    background-color: rgba(199, 223, 235, 0.5);
 }
 
 .editor-btn-container {
@@ -60,14 +81,54 @@
 }
 
 .editor-btn {
-    background-color: #3498db;
-    color: #fff;
-    padding: 6px 10px;
-    margin: 6px;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
+    border-width: 0;
+    width: 60px;
+    font-weight: 600;
+    margin: 0 5px;
+    padding: 6px 8px;
+    color: #ffffff;
+    border-radius: 30px;
+    text-decoration: none;
+    transition: background-color 0.2s, transform 0.2s;
+    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
+    background-repeat: no-repeat;
+    background-size: 0 0;
+    margin-top: auto; /* 添加此行，使其与父元素底部对齐 */
 }
+
+.editor-btn.save-btn {
+    background-color: var(--save-btn-color);
+}
+  
+.editor-btn.delete-btn {
+    background-color: var(--delete-btn-color);
+}
+  
+.editor-btn.cancel-btn {
+    background-color: var(--cancel-btn-color);
+}
+
+/* 写上述三个元素的hover的选择器 */
+.editor-btn.save-btn:hover{
+    outline: 2px solid var(--save-btn-color);
+    box-shadow: 0 0 3px 0 var(--save-btn-color);
+}
+.editor-btn.delete-btn:hover{
+    outline: 2px solid var(--delete-btn-color);
+    box-shadow: 0 0 3px 0 var(--delete-btn-color);
+}
+.editor-btn.cancel-btn:hover{
+    outline: 2px solid var(--cancel-btn-color);
+    box-shadow: 0 0 3px 0 var(--cancel-btn-color);
+}
+
+.editor-btn:hover {
+    cursor: pointer;
+    border-radius: 30px;
+    background-size: 100% 100%;
+    transform: scale(1.15);
+    outline-offset: 2px;
+  }
 
 .add-btn {
     display: block;
