@@ -4,7 +4,7 @@
     --cancel-btn-color: #0071e3;
   }
 
-.student-card {
+  .student-card {
     height: 268px;
     background: linear-gradient(to right, #ffffff 0%, #fefefe 50%, #f7f7f7 100%);
     border: 1px solid #e0e0e3;
@@ -24,7 +24,7 @@
 }
 
 .student-card.expanded{
-    height: 405px;
+    height: 300px;
 }
 
 .student-card h2 {
@@ -59,7 +59,7 @@
 }
 
 .editor .editor-lable{
-    font-size: 16px;
+    font-size: 12px;
     font-weight: 600;
 }
 
@@ -67,6 +67,7 @@
     width: calc(100% - 10px);
     margin-bottom: 10px;
     padding: 3px;
+    font-size: 20px;
 }
 
 .editor input:focus{
@@ -78,6 +79,7 @@
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
+    margin-top: 10px;
 }
 
 .editor-btn {

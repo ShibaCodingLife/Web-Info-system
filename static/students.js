@@ -13,11 +13,11 @@ $(document).ready(function () {
         let student_card = $(this).closest(".student-card");
         let studentData = {
             name: student_card.find(".editor #name").val(),
-            number: student_card.find(".editor #student_id").val(),
-            age: student_card.find(".editor #age").val(),
-            sex: student_card.find(".editor #sex").val(),
-            address: student_card.find(".editor #address").val(),
-            sdept: student_card.find(".editor #department").val(),
+            number: student_card.find(".editor #student_id").text(),
+            age: student_card.find(".editor #age").text(),
+            sex: student_card.find(".editor #sex").text(),
+            address: student_card.find(".editor #address").text(),
+            sdept: student_card.find(".editor #department").text(),
         };
         let student_id = student_card.attr("data-student-id");
         let url;
@@ -93,6 +93,7 @@ $(document).ready(function () {
         new_student_card.removeAttr("id");
         new_student_card.css("display", "flex");
         new_student_card.insertBefore(student_card_template);
+        new_student_card.click();
     });
 
     $("#teacherName").click(function (event) {
