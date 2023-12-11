@@ -182,7 +182,11 @@
             <a href="{{ url_for('students', page=1) }}">&lt;&lt;</a>
             <a href="{{ url_for('students', page=this_page-1) }}">&lt;</a>
             {% for page in range(1, total_pages + 1) %}
-            <a href="{{ url_for('students', page=page) }}">{{ page }}</a>
+                {% if page == this_page %}
+                    <a href="{{ url_for('students', page=page) }}" class="current-page">{{ page }}</a>
+                {% else %}
+                    <a href="{{ url_for('students', page=page) }}">{{ page }}</a>
+                {% endif %}
             {% endfor %}
             <a href="{{ url_for('students', page=this_page+1) }}">&gt;</a>
             <a href="{{ url_for('students', page=total_pages) }}">&gt;&gt;</a>
