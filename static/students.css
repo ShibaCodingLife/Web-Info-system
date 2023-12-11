@@ -1,19 +1,20 @@
 @import url("students_card.css");
 
-@font-face {
-    font-family: 'CustomFont';
-    src: url('fonts/SF-Pro.ttf') format('truetype'),
-    url('fonts/SF-Pro-Italic.ttf') format('truetype');
-}
-
 * {
-    font-family: CustomFont, Helvetica Neue, Helvetica, sans-serif;
+    font-family:Helvetica, sans-serif;
 }
 
-main{
+body{
     background-image: url('./bg.svg');
-    flex-grow: 1; /* main 元素会拉伸以填充剩余的空间 */
+    background-repeat: no-repeat;
+    background-size: cover;
 }
+
+main,footer{
+    background-color: transparent;
+}
+
+
 
 body {
     display: flex;
@@ -147,29 +148,42 @@ h1 {
 }
 
 main {
+    flex-grow: 1;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
 }
 
 footer {
-    background-color: #f2f2f2;
+    border: 1px solid #232136;
+    background-color: rgba(255, 255, 255, 0.374);
     padding: 10px;
     text-align: center;
 }
 
 .page-footnote {
+    height: 30px;
     display: flex;
     justify-content: center;
 }
 
 .page-footnote a {
+    display: flex;
+    align-items: center;
+    font-size: px;
+    padding: 1px 10px;
+    border: 1px solid #232136;
+    color:#232136;
     text-decoration: none;
-    color: #1a0dab;
     margin: 0 5px;
-    font-size: 14px;
 }
 
 .page-footnote a:hover {
     text-decoration: underline;
+}
+
+.page-footnote a.current-page {
+    /* color: rgb(190, 32, 151); */
+    color: #f2f2f2;
+    background-color: #35782e;
 }
