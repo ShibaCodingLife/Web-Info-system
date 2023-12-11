@@ -70,10 +70,23 @@
     font-size: 20px;
 }
 
+
 .editor input:focus{
     border-width: 2px;
-    background-color: rgba(199, 223, 235, 0.5);
+    cursor: text;
+    background: transparent;
 }
+
+.editor input[id="name"]{
+    font-size: 1.5em;
+}
+
+.editor #name{
+    border: 0;
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+}
+
 
 .editor-btn-container {
     display: flex;
@@ -124,6 +137,16 @@
     box-shadow: 0 0 3px 0 var(--cancel-btn-color);
 }
 
+.editor-btn.save-btn:active{
+    background-color: #034d14;
+}
+.editor-btn.delete-btn:active{
+    background-color: rgb(150, 18, 18);
+}
+.editor-btn.cancel-btn:active{
+    background-color: #02509f;
+}
+
 .editor-btn:hover {
     cursor: pointer;
     border-radius: 30px;
@@ -136,6 +159,11 @@
     display: block;
     max-height: 128px;
     margin: 40px auto;
+    transition: transform 0.5s;
+}
+
+.add-btn:hover{
+    transform: scale(1.25);
 }
 
 /*===========================表格样式=============================*/
@@ -168,7 +196,17 @@ td {
     font-weight: 400;
     text-align: left;
     border-right: 1px solid #ccc;
+    
 }
+
+td[contenteditable="true"]{
+    cursor: text  ;
+}
+
+td[contenteditable="true"]:focus{
+    background: #f0f5ff;
+}
+
 
 tbody tr:first-child th {
     border-top-left-radius: 5px;
