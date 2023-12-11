@@ -158,7 +158,7 @@
 .add-btn {
     display: block;
     max-height: 128px;
-    margin: 40px auto;
+    margin: 50px auto;
     transition: transform 0.5s;
 }
 

@@ -1,12 +1,12 @@
 $(document).ready(function () {
-    $(".student-card").click(function (event) {
+    $(".student-card.student-card:not(.add)").click(function(event) {
         event.stopPropagation();
         if ($(this).hasClass("expanded")) {
             return;
         }
         $(this).toggleClass("expanded");
         $(this).find(".info, .editor").toggle();
-    });
+      });
 
     $(".save-btn").click(function (event) {
         event.stopPropagation();

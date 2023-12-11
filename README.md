@@ -59,6 +59,11 @@ npm install --prefix ./static argon2-browser
 poetry run flask run
 ```
 
+默认账号密码
+**小柴桑 123456**
+
+---
+
 ### `students` 页面搜索功能语法
 
 基本结构 `[\<key\>:[\<type\>:]]\<value\>`
