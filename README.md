@@ -53,10 +53,10 @@ poetry install --no-root
 npm install --prefix ./static argon2-browser
 ```
 
-使用以下命令运行
+使用以下命令调试运行
 
 ```sh
-poetry run flask run
+poetry run flask run --debug
 ```
 
 默认账号密码
