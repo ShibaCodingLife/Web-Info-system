@@ -1,12 +1,12 @@
 $(document).ready(function () {
-    $(".student-card.student-card:not(.add)").click(function(event) {
+    $(".student-card.student-card:not(.add)").click(function (event) {
         event.stopPropagation();
         if ($(this).hasClass("expanded")) {
             return;
         }
         $(this).toggleClass("expanded");
         $(this).find(".info, .editor").toggle();
-      });
+    });
 
     $(".save-btn").click(function (event) {
         event.stopPropagation();
@@ -45,7 +45,7 @@ $(document).ready(function () {
                         student_card.removeClass("new-student-card");
                     }
                 } else {
-                    alert("学号重复,请确认后添加!");
+                    alert("学号重复！");
                 }
             },
             error: function (error) {
