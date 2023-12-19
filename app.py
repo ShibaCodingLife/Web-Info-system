@@ -17,11 +17,11 @@ config, app, db, Student_base_info, Teacher_stu_info = helpers.init()
 app.app_context().push()
 
 code_map = TTLCache[str, str](
-    maxsize=config.greeting.max_sessions,
-    ttl=config.greeting.expire_sec)
+    maxsize=config.greeting.max_sessions, ttl=config.greeting.expire_sec
+)
 
 
-@app.route('/')
+@app.route("/")
 def home():
     cookies = request.cookies.get("cookies")
     if not cookies or not validate_cookies(cookies):
@@ -79,7 +79,9 @@ def login_get():
     if code != captcha_code:
         return jsonify({"success": False, "code": 3, "info": "验证码错误"})
 
-    teacher_info = Student_base_info.query.filter_by(name=name, password=password).first()
+    teacher_info = Student_base_info.query.filter_by(
+        name=name, password=password
+    ).first()
 
     logging.debug("Login attempt: name: %s, password: %s", name, password)
 
@@ -88,12 +90,13 @@ def login_get():
         session_cookies = Cookies(
             username=name,
             token=password,
-            expire=datetime.utcnow() + timedelta(seconds=config.cookies.expire_sec)
+            expire=datetime.utcnow() + timedelta(seconds=config.cookies.expire_sec),
         )
         response.set_cookie("cookies", encrypt_cookies(session_cookies), httponly=True)
         return response
     else:
         return jsonify({"success": False, "code": 4, "info": "教师信息错误"})
+
 
 @app.route("/register_get", methods=["POST"])
 def register_get():
@@ -169,8 +172,7 @@ def register_html():
     b = io.BytesIO()
     image.save(b, "jpeg")
     image_path = f"data:image/jpeg;base64,{b64encode(b.getvalue()).decode()}"
-    res = make_response(render_template(
-        "register.html", image_path=image_path))
+    res = make_response(render_template("register.html", image_path=image_path))
     session_id = str(uuid4())
     res.set_cookie("session_id", session_id, httponly=True)
     code_map[session_id] = captcha_code.lower()
@@ -189,19 +191,28 @@ def students():
     total_pages = ceil(len(students) / ITEMS_PER_PAGE)
 
     if not total_pages:
-        return render_template("students.html", teacher_name=name, students=[],
-                               total_pages=1, this_page=1)
+        return render_template(
+            "students.html", teacher_name=name, students=[], total_pages=1, this_page=1
+        )
 
     if page < 0 or page >= total_pages:
         return redirect("/students?page=1")
 
     start = page * ITEMS_PER_PAGE
-    end = start + ITEMS_PER_PAGE if start + \
-                                    ITEMS_PER_PAGE < len(students) else len(students)
+    end = (
+        start + ITEMS_PER_PAGE
+        if start + ITEMS_PER_PAGE < len(students)
+        else len(students)
+    )
     students = students[start:end]
 
-    return render_template("students.html", teacher_name=name, students=students,
-                           total_pages=total_pages, this_page=page + 1)
+    return render_template(
+        "students.html",
+        teacher_name=name,
+        students=students,
+        total_pages=total_pages,
+        this_page=page + 1,
+    )
 
 
 @app.route("/search/<search_input>", methods=["GET"])
@@ -215,27 +226,47 @@ def search(search_input):
     try:
         students = search_t_s_info(search_input, name, db, Teacher_stu_info)
     except ValueError as e:
-        return render_template("students.html", teacher_name=name, students=[],
-                               total_pages=1, this_page=1,
-                               search_input=search_input, error=str(e))
+        return render_template(
+            "students.html",
+            teacher_name=name,
+            students=[],
+            total_pages=1,
+            this_page=1,
+            search_input=search_input,
+            error=str(e),
+        )
 
     total_pages = ceil(len(students) / ITEMS_PER_PAGE)
 
     if not total_pages:
-        return render_template("students.html", teacher_name=name, students=[],
-                               total_pages=1, this_page=1, search_input=search_input)
+        return render_template(
+            "students.html",
+            teacher_name=name,
+            students=[],
+            total_pages=1,
+            this_page=1,
+            search_input=search_input,
+        )
 
     if page < 0 or page >= total_pages:
         return redirect(f"/search/{search_input}?page=1")
 
     start = page * ITEMS_PER_PAGE
-    end = start + ITEMS_PER_PAGE if start + \
-                                    ITEMS_PER_PAGE < len(students) else len(students)
+    end = (
+        start + ITEMS_PER_PAGE
+        if start + ITEMS_PER_PAGE < len(students)
+        else len(students)
+    )
     students = students[start:end]
 
-    return render_template("students.html", teacher_name=name, students=students,
-                           total_pages=total_pages, this_page=page + 1,
-                           search_input=search_input)
+    return render_template(
+        "students.html",
+        teacher_name=name,
+        students=students,
+        total_pages=total_pages,
+        this_page=page + 1,
+        search_input=search_input,
+    )
 
 
 @app.route("/all_get", methods=["POST"])  # 前端点击获取所有关于老师学生信息并渲染至表格中
@@ -246,9 +277,17 @@ def get_info():
     name = cookies.username
     logging.debug("Get all info : name: %s", name)
     students = Teacher_stu_info.query.filter_by(teachername=name).all()
-    student_list = [{"name": s.studentname, "number": s.studentnumber, "sex": s.studentsex,
-                     "age": s.studentage, "origin": s.studentorigin, "sdept": s.studentsdept}
-                    for s in students]  # 用你的实际字段替换
+    student_list = [
+        {
+            "name": s.studentname,
+            "number": s.studentnumber,
+            "sex": s.studentsex,
+            "age": s.studentage,
+            "origin": s.studentorigin,
+            "sdept": s.studentsdept,
+        }
+        for s in students
+    ]  # 用你的实际字段替换
     return jsonify({"students": student_list})  # 以json格式返回
 
 
@@ -256,8 +295,7 @@ def get_info():
 @login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
 def delete_student(student_id):
     # 在数据库中查找该学号的学生
-    student = Teacher_stu_info.query.filter_by(
-        studentnumber=student_id).first()
+    student = Teacher_stu_info.query.filter_by(studentnumber=student_id).first()
     if student:
         db.session.delete(student)  # 删除学生记录
         db.session.commit()  # 提交更改
@@ -271,11 +309,9 @@ def delete_student(student_id):
 @login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
 def update_student(student_id):
     data = request.get_json()  # 获取json文件
-    student = Teacher_stu_info.query.filter_by(
-        studentnumber=student_id).first()
+    student = Teacher_stu_info.query.filter_by(studentnumber=student_id).first()
 
-    logging.debug("Update student : student_id: %s, data: %s",
-                  student_id, data)
+    logging.debug("Update student : student_id: %s, data: %s", student_id, data)
     if student:
         try:
             student.studentnumber = data["number"]
@@ -299,14 +335,28 @@ def add_student():
     cookies = request.cookies.get("cookies")
     cookies = decrypt_cookies(cookies)
     name = cookies.username
+    # 获取当前表中的最大 ID
+    max_id = db.session.query(db.func.max(Teacher_stu_info.id)).scalar()
+    # 如果表中没有数据，设置初始 ID 为 1，否则加一
+    id = 1 if max_id is None else max_id + 1
 
     try:
-        new_stu = Teacher_stu_info(teachername=name, studentname=data["name"], studentnumber=data["number"],
-                                   studentage=data["age"], studentsex=data["sex"],
-                                   studentsdept=data["sdept"], studentorigin=data["address"],
-                                   )
+        new_stu = Teacher_stu_info(
+            id=id,
+            teachername=name,
+            studentname=data["name"],
+            studentnumber=data["number"],
+            studentage=data["age"],
+            studentsex=data["sex"],
+            studentsdept=data["sdept"],
+            studentorigin=data["address"],
+        )
     except KeyError:
         return jsonify({"success": False, "code": 4402, "info": "信息不完整"})
+
+    student = Teacher_stu_info.query.filter_by(studentnumber=data["number"]).first()
+    if student:
+        return jsonify({"success": False, "code": 4404, "info": "该学生已存在"})
 
     db.session.add(new_stu)
     db.session.flush()
@@ -315,7 +365,7 @@ def add_student():
     return jsonify({"success": True, "student_id": new_id})
 
 
-@app.route('/search-by-name', methods=['POST'])  # 通过学生姓名查询
+@app.route("/search-by-name", methods=["POST"])  # 通过学生姓名查询
 @login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
 def search_by_name():
     cookies = request.cookies.get("cookies")
@@ -324,12 +374,20 @@ def search_by_name():
 
     students = Teacher_stu_info.query.filter_by(studentname=name).all()
     if students:
-        student_list = [{'name': s.studentname, 'number': s.studentnumber, 'sex': s.studentsex,
-                         'age': s.studentage, 'origin': s.studentorigin, 'sdept': s.studentsdept}
-                        for s in students]  # 用你的实际字段替换
-        return jsonify({'success': True, 'student': student_list})
+        student_list = [
+            {
+                "name": s.studentname,
+                "number": s.studentnumber,
+                "sex": s.studentsex,
+                "age": s.studentage,
+                "origin": s.studentorigin,
+                "sdept": s.studentsdept,
+            }
+            for s in students
+        ]  # 用你的实际字段替换
+        return jsonify({"success": True, "student": student_list})
     else:
-        return jsonify({'success': False, "code": 4404, "info": "没有该学生信息"})
+        return jsonify({"success": False, "code": 4404, "info": "没有该学生信息"})
 
 
 if __name__ == "__main__":
