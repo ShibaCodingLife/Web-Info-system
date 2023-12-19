@@ -12,24 +12,23 @@ $(document).ready(function () {
         event.stopPropagation();
         let student_card = $(this).closest(".student-card");
         let studentData = {
-            name: student_card.find(".editor #name").val(),
-            number: student_card.find(".editor #student_id").text(),
-            age: student_card.find(".editor #age").text(),
-            sex: student_card.find(".editor #sex").text(),
-            address: student_card.find(".editor #address").text(),
-            sdept: student_card.find(".editor #department").text(),
+            name: student_card.find(".editor #name").val().trim(),
+            number: student_card.find(".editor #student_id").text().trim(),
+            age: student_card.find(".editor #age").text().trim(),
+            sex: student_card.find(".editor #sex").text().trim(),
+            address: student_card.find(".editor #address").text().trim(),
+            sdept: student_card.find(".editor #department").text().trim(),
         };
-        let student_id = student_card.attr("data-student-id");
-        let url;
-        if (student_id === "-1") url = "/add_student";
-        else url = "/update_student/" + student_id;
+        let is_new = student_card.hasClass("new-student-card");
+        let original_student_id = student_card.find(".info #student_id").text().trim();
+        let url = is_new ? "/add_student" : ("/update_student/" + original_student_id);
 
         $.ajax({
             url: url,
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify(studentData),
-            success: function (response) {
+            success: (response) => {
                 console.log(response);
                 if (response.success) {
                     student_card.find(".info, .editor").toggle();
@@ -40,15 +39,14 @@ $(document).ready(function () {
                     student_card.find(".info #sex").text(studentData.sex);
                     student_card.find(".info #address").text(studentData.address);
                     student_card.find(".info #department").text(studentData.sdept);
-                    student_card.attr("data-student-id", studentData.number);
-                    if (student_id === "-1") {
+                    if (is_new) {
                         student_card.removeClass("new-student-card");
                     }
                 } else {
-                    alert("学号重复,请确认后添加!");
+                    alert(response.info);
                 }
             },
-            error: function (error) {
+            error: (error) => {
                 console.log(error);
             },
         });
@@ -57,19 +55,23 @@ $(document).ready(function () {
     $(".delete-btn").click(function (event) {
         event.stopPropagation();
         let student_card = $(this).closest(".student-card");
-        let delete_url = "/delete_student/" + student_card.attr("data-student-id");
+        if (student_card.hasClass("new-student-card")) {
+            student_card.remove();
+            return;
+        }
+        let student_id = student_card.find(".info #student_id").text().trim();
+        let delete_url = "/delete_student/" + student_id;
         $.ajax({
             url: delete_url,
             type: "DELETE",
-            success: function (response) {
-                console.log(response);
+            success: (response) => {
                 if (response.success) {
                     student_card.remove();
                 } else {
                     alert(response.info);
                 }
             },
-            error: function (error) {
+            error: (error) => {
                 console.log(error);
             },
         });
@@ -78,7 +80,7 @@ $(document).ready(function () {
     $(".cancel-btn").click(function (event) {
         event.stopPropagation();
         let student_card = $(this).closest(".student-card");
-        if (student_card.attr("data-student-id") === "-1") {
+        if (student_card.hasClass("new-student-card")) {
             student_card.remove();
             return;
         }

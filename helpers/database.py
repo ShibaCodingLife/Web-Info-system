@@ -8,7 +8,6 @@ __ALL__ = ("init")
 def init(config: Config):
     app = Flask(__name__, template_folder="../templates",
                 static_folder="../static")  # 初始化
-    app.debug = config.debug
     app.config["SQLALCHEMY_DATABASE_URI"] = config.db.uri
     db = SQLAlchemy(app)
 

@@ -10,7 +10,7 @@ __ALL__ = ("get_config", "update_config", "config_logging", "Config")
 
 class Config(BaseModel):
     class DBConfig(BaseModel):
-        uri: str = "sqlite:///shiba.db"
+        uri: str = "sqlite:///test.db"
         username: str = ""
         password: str = ""
 
@@ -24,9 +24,11 @@ class Config(BaseModel):
         expire_sec: int = 300
 
     class ExperimentalConfig(BaseModel):
-        replace_new_with_students: bool = False
+        ...
 
-    version: int = 3
+    version: int = 4
+    host: str = "0.0.0.0"
+    port: int = 5000
     debug: bool = True
     cookies: CookiesConfig = Field(default_factory=CookiesConfig)
     greeting: GreetingConfig = Field(default_factory=GreetingConfig)

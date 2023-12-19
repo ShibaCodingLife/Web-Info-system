@@ -5,9 +5,9 @@ config.bak
 .DS_Store
 .vscode
 geckodriver.log
+!test.db
 *.db
 !shiba.db
-node_modules
 captcha.png
 
 .idea

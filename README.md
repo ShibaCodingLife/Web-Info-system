@@ -50,7 +50,7 @@ git clone https://github.com/ShibaCodingLife/web-info-system.git
 ```sh
 pip install -U poetry
 poetry install --no-root
-npm install --prefix ./static argon2-browser
+npm install --prefix ./static argon2-browser # Optional
 ```
 
 使用以下命令调试运行
@@ -66,7 +66,7 @@ poetry run flask run --debug
 
 ### `students` 页面搜索功能语法
 
-基本结构 `[\<key\>:[\<type\>:]]\<value\>`
+基本结构 `[<key>:[<type>:]]<value>`
 
 - `key`: 搜索的键名，可选值在把鼠标放在学生信息键名上时显示, 默认为 `name`
 - `type`: 搜索的匹配模式，可选值为 `e`(精确匹配) 或 `r`(正则匹配) 或 `f`(模糊匹配)，默认为 `f`

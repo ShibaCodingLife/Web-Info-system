@@ -26,9 +26,7 @@ def home():
     cookies = request.cookies.get("cookies")
     if not cookies or not validate_cookies(cookies):
         return redirect("/login")
-    # if config.experimental.replace_new_with_students:
     return redirect("/students")
-    # return redirect("/new.html")
 
 
 @app.route("/login", methods=["GET"])
@@ -301,8 +299,7 @@ def delete_student(student_id):
         db.session.commit()  # 提交更改
         # 将名字交给前端用于删除菜单左侧名单
         return jsonify({"success": True, "studentName": student.studentname})
-    else:
-        return jsonify({"success": False, "code": 4404, "info": "没有该学生信息"})
+    return jsonify({"success": False, "code": 4404, "info": "没有该学生信息"})
 
 
 @app.route("/update_student/<student_id>", methods=["POST"])
@@ -324,8 +321,7 @@ def update_student(student_id):
             return jsonify({"success": False, "code": 4402, "info": "信息不完整"})
         db.session.commit()
         return jsonify({"success": True})
-    else:
-        return jsonify({"success": False, "code": 4404, "info": "没有该学生信息"})
+    return jsonify({"success": False, "code": 4404, "info": "没有该学生信息"})
 
 
 @app.route("/add_student", methods=["POST"])
@@ -335,14 +331,12 @@ def add_student():
     cookies = request.cookies.get("cookies")
     cookies = decrypt_cookies(cookies)
     name = cookies.username
-    # 获取当前表中的最大 ID
-    max_id = db.session.query(db.func.max(Teacher_stu_info.id)).scalar()
-    # 如果表中没有数据，设置初始 ID 为 1，否则加一
-    id = 1 if max_id is None else max_id + 1
+
+    if not data["number"].strip():
+        return jsonify({"success": False, "code": 4402, "info": "学号不能为空"})
 
     try:
         new_stu = Teacher_stu_info(
-            id=id,
             teachername=name,
             studentname=data["name"],
             studentnumber=data["number"],
@@ -360,9 +354,8 @@ def add_student():
 
     db.session.add(new_stu)
     db.session.flush()
-    new_id = new_stu.studentnumber
     db.session.commit()
-    return jsonify({"success": True, "student_id": new_id})
+    return jsonify({"success": True, "student_id": new_stu.studentnumber})
 
 
 @app.route("/search-by-name", methods=["POST"])  # 通过学生姓名查询
@@ -386,9 +379,8 @@ def search_by_name():
             for s in students
         ]  # 用你的实际字段替换
         return jsonify({"success": True, "student": student_list})
-    else:
-        return jsonify({"success": False, "code": 4404, "info": "没有该学生信息"})
+    return jsonify({"success": False, "code": 4404, "info": "没有该学生信息"})
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host=config.host, port=config.port, debug=config.debug)
