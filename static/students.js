@@ -45,7 +45,7 @@ $(document).ready(function () {
                         student_card.removeClass("new-student-card");
                     }
                 } else {
-                    alert(response.info);
+                    alert("学号重复,请确认后添加!");
                 }
             },
             error: function (error) {
