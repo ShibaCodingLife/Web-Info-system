@@ -343,14 +343,18 @@ def search_by_name():
 @login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
 def delete_students():
     try:
+        # 获取当前登录用户的用户名
         cookies = request.cookies.get("cookies")
         cookies = decrypt_cookies(cookies)
         name = cookies.username
 
-
+        # 从请求中获取被选中学生的学号列表
         student_ids = request.json.get('student_ids', [])
 
+
+        # 执行删除操作
         for student_id in student_ids:
+            # 在数据库中找到相应的学生并删除,
             student = Teacher_stu_info.query.filter_by(studentnumber=student_id, teachername=name).first()
             print(student)
             if student:
@@ -360,6 +364,55 @@ def delete_students():
         return jsonify({"success": True, "message": "学生删除成功！"})
     except Exception as e:
         return jsonify({"success": False, "code": 500, "message": str(e)}), 500
+    
+@app.route('/update_students_all', methods=['POST'])
+@login_required(jsonify({"success": False, "code": 4401, "info": "请先登录"}))
+def update_all_student():
+    try:
+        # 获取当前登录用户的用户名
+        cookies = request.cookies.get("cookies")
+        cookies = decrypt_cookies(cookies)
+        name = cookies.username
+
+     
+        updated_students = request.json.get('students', [])
+
+        # Update the database records
+        for updated_student in updated_students:
+            # Check if 'id' key is present in the updated student
+            if 'id' not in updated_student:
+                return jsonify({"success": True, "message": "'OK"})
+            student_id = updated_student['id']
+            
+            # Skip records with id equal to -1
+            if student_id == -1:
+                continue  # This 'continue' statement should be inside the loop
+
+            print(student_id)
+            student = Teacher_stu_info.query.filter_by(studentnumber=student_id,teachername=name).first()
+
+            if student:
+                # Update the student information
+                student.studentname = updated_student.get('name', student.studentname)
+                student.studentnumber = updated_student.get('number', student.studentnumber)
+                student.studentage = updated_student.get('age', student.studentage)
+                student.studentsex = updated_student.get('sex', student.studentsex)
+                student.studentorigin = updated_student.get('address', student.studentorigin)
+                student.studentsdept = updated_student.get('sdept', student.studentsdept)
+
+                db.session.commit()
+
+        # Respond with a success message
+        return jsonify({"success": True, "message": "Batch update successful"})
+
+    except Exception as e:
+        # Log the exception
+        logging.exception("An error occurred:")
+        # Handle exceptions
+        return jsonify({"success": False, "message": str(e)}), 500
+        
+    
+
 
 
 if __name__ == "__main__":

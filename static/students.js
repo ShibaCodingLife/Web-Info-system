@@ -162,6 +162,51 @@ $(document).ready(function () {
 
     });
 
+    
+$("#change-btn").click(function (event) {
+
+    let allStudents = $(".student-card");
+
+   
+    let updatedStudents = [];
+    allStudents.each(function () {
+        let studentCard = $(this);
+
+        
+        let updatedData = {
+            id: studentCard.data("student-id"),
+            name: studentCard.find(".editor #name").val(),
+            number: studentCard.find(".editor #student_id").text(),
+            age: studentCard.find(".editor #age").text(),
+            sex: studentCard.find(".editor #sex").text(),
+            address: studentCard.find(".editor #address").text(),
+            sdept: studentCard.find(".editor #department").text(),
+        };
+
+        updatedStudents.push(updatedData);
+    });
+
+    
+    $.ajax({
+        type: "POST",
+        url: "/update_students_all", 
+        contentType: "application/json;charset=UTF-8",
+        data: JSON.stringify({ students: updatedStudents }),
+        success: function (response) {
+            
+            
+            alert('学生信息批量修改成功!');
+            location.reload();
+            
+        },
+        error: function (error) {
+            
+            alert("学生信息修改失败：" + error.responseJSON.message);
+        }
+    });
+     });
+
+
     $(document).on("click", function () {
         $(".dropdown").removeClass("show-dropdown");
     });
