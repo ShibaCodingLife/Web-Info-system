@@ -10,7 +10,7 @@ __ALL__ = ("get_config", "update_config", "config_logging", "Config")
 
 class Config(BaseModel):
     class DBConfig(BaseModel):
-        uri: str = "sqlite:///test.db"
+        uri: str = "sqlite:///shiba.db"
         username: str = ""
         password: str = ""
 

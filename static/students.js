@@ -12,23 +12,24 @@ $(document).ready(function () {
         event.stopPropagation();
         let student_card = $(this).closest(".student-card");
         let studentData = {
-            name: student_card.find(".editor #name").val().trim(),
-            number: student_card.find(".editor #student_id").text().trim(),
-            age: student_card.find(".editor #age").text().trim(),
-            sex: student_card.find(".editor #sex").text().trim(),
-            address: student_card.find(".editor #address").text().trim(),
-            sdept: student_card.find(".editor #department").text().trim(),
+            name: student_card.find(".editor #name").val(),
+            number: student_card.find(".editor #student_id").text(),
+            age: student_card.find(".editor #age").text(),
+            sex: student_card.find(".editor #sex").text(),
+            address: student_card.find(".editor #address").text(),
+            sdept: student_card.find(".editor #department").text(),
         };
-        let is_new = student_card.hasClass("new-student-card");
-        let original_student_id = student_card.find(".info #student_id").text().trim();
-        let url = is_new ? "/add_student" : ("/update_student/" + original_student_id);
+        let student_id = student_card.attr("data-student-id");
+        let url;
+        if (student_id === "-1") url = "/add_student";
+        else url = "/update_student/" + student_id;
 
         $.ajax({
             url: url,
             type: "POST",
             contentType: "application/json",
             data: JSON.stringify(studentData),
-            success: (response) => {
+            success: function (response) {
                 console.log(response);
                 if (response.success) {
                     student_card.find(".info, .editor").toggle();
@@ -39,14 +40,15 @@ $(document).ready(function () {
                     student_card.find(".info #sex").text(studentData.sex);
                     student_card.find(".info #address").text(studentData.address);
                     student_card.find(".info #department").text(studentData.sdept);
-                    if (is_new) {
+                    student_card.attr("data-student-id", studentData.number);
+                    if (student_id === "-1") {
                         student_card.removeClass("new-student-card");
                     }
                 } else {
-                    alert(response.info);
+                    alert("学号重复,请确认后添加!");
                 }
             },
-            error: (error) => {
+            error: function (error) {
                 console.log(error);
             },
         });
@@ -55,23 +57,19 @@ $(document).ready(function () {
     $(".delete-btn").click(function (event) {
         event.stopPropagation();
         let student_card = $(this).closest(".student-card");
-        if (student_card.hasClass("new-student-card")) {
-            student_card.remove();
-            return;
-        }
-        let student_id = student_card.find(".info #student_id").text().trim();
-        let delete_url = "/delete_student/" + student_id;
+        let delete_url = "/delete_student/" + student_card.attr("data-student-id");
         $.ajax({
             url: delete_url,
             type: "DELETE",
-            success: (response) => {
+            success: function (response) {
+                console.log(response);
                 if (response.success) {
                     student_card.remove();
                 } else {
                     alert(response.info);
                 }
             },
-            error: (error) => {
+            error: function (error) {
                 console.log(error);
             },
         });
@@ -80,7 +78,7 @@ $(document).ready(function () {
     $(".cancel-btn").click(function (event) {
         event.stopPropagation();
         let student_card = $(this).closest(".student-card");
-        if (student_card.hasClass("new-student-card")) {
+        if (student_card.attr("data-student-id") === "-1") {
             student_card.remove();
             return;
         }
@@ -125,6 +123,43 @@ $(document).ready(function () {
             return;
         }
         window.location.href = "/search/" + search_text;
+    });
+
+    $("#delete-btn").click(function (event){
+        // 获取所有被选中的学生卡片
+        let selectedStudents = $(".form-check-input:checked");
+
+        // 如果没有选中的学生，不执行任何操作
+        if (selectedStudents.length === 0) {
+            alert("请选择要删除的学生！");
+            return;
+        }
+
+        // 收集选中学生的学号
+        let studentIds = [];
+        selectedStudents.each(function() {
+            let studentId = $(this).closest(".student-card").data("student-id");
+            studentIds.push(studentId);
+        });
+
+        // 发送请求到后端进行批量删除
+        $.ajax({
+            type: "POST",
+            url: "/delete_students",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify({ student_ids: studentIds }),
+            success: function(response) {
+                // 处理成功响应
+                alert('学生删除成功!');
+                selectedStudents.closest(".student-card").remove();
+                // 刷新页面或执行其他操作
+            },
+            error: function(error) {
+                // 处理错误响应
+                alert("删除失败：" + error.responseJSON.message);
+            }
+        });
+
     });
 
     $(document).on("click", function () {
