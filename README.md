@@ -1,8 +1,10 @@
 # 关于 Web-Info-system
 
 ## 项目介绍
-
+>2023第四季度-山东大学计算机系Web开发课程大作业
+ 
 Web-Info-system 是一个小型的前端基于原生 HTML5,CSS3 及 Javascript,Jquery 和 Bootstrap,后端基于 Flask 及图像处理库 Pillow 构建的 Web 学生信息管理系统。该系统允许用户查看、编辑和删除学生信息，提供了直观的用户界面和后端数据处理逻辑。
+
 
 ## 主要特性
 
